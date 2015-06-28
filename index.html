@@ -56,12 +56,18 @@
           <span class="help-block with-errors"></span>
         </div>
 
+        <div class="form-group">
+          <label for="versionInput">Site Password Version Number</label>
+          <input type="number" class="form-control" id="versionInput" value="1" min="1" max="99" required="required">
+          <span class="help-block with-errors"></span>
+        </div>
+
       </form>
 
       <div id="passwordOutputContainer" class="well">
         <p><strong>Generated Password</strong></p>
         <p><code id="passwordOutput"></code></p>
-        <p><small class="text-muted"><strong>salt:</strong> <span id="sanitizedSaltInWords"></span></small></p>
+        <p><small class="text-muted"><strong>settings:</strong> <span id="sanitizedSaltInWords"></span></small></p>
         <p><small class="text-muted"><strong>entropy:</strong> ~<span id="passwordEntropy"></span> bits</small></p>
       </div>
 

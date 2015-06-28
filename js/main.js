@@ -1,45 +1,62 @@
-function computePassword(basePassPhrase, username, siteUri, extraSalt) {
-  var zxcvbnResult, pbkdf2Rounds, pbkdf2KeyLen, hostname,
-      hostnameValid, salt, pbkdf2Key, pbkdf2KeyBase64,
-      pbkdf2KeyBase64Len, password, passwordEntropy;
-
-  pbkdf2Rounds = 25000;    // number of PBKDF2 rounds
-  pbkdf2KeyLen = 32;       // output key length in bytes
-  pbkdf2KeyBase64Len = 24; // the generated password is the first n chars of pbkdf2Key Base64 output
-
+function computePassword(basePassPhrase, username, siteUri, version, extraSalt) {
   // Estimate base password entropy with ZXCVBN
   // https://blogs.dropbox.com/tech/2012/04/zxcvbn-realistic-password-strength-estimation/
   // https://dl.dropboxusercontent.com/u/209/zxcvbn/test/index.html
-  zxcvbnResult = zxcvbn(basePassPhrase);
+  var zxcvbnPassphrase = zxcvbn(basePassPhrase);
 
-  host = extractHostFromUri(siteUri);
+  var host = extractHostFromUri(siteUri);
 
-  if (zxcvbnResult.score >= 4 && username.length >= 1 && host) {
-    // Compose a consistent salt and convert it to a Uint8Array of Bytes
-    if (extraSalt.length >= 1) {
-        salt = nacl.util.decodeUTF8(username + '@' + host + ':' + extraSalt);
-    } else {
-        salt = nacl.util.decodeUTF8(username + '@' + host);
-    }
+  if (zxcvbnPassphrase.score >= 4 && username.length >= 1 && host && version >= 1) {
 
-    // Derive a cryptographically strong PBKDF2 key (password) as a Uint8Array of Bytes
-    pbkdf2Key = sha256.pbkdf2(nacl.util.decodeUTF8(basePassPhrase), salt, pbkdf2Rounds, pbkdf2KeyLen);
+      // Generate a master key w/ HMAC-SHA-256, from passphrase and username
+      var passPhraseUint8 = nacl.util.decodeUTF8(basePassPhrase);                    // Byte Array
+      var usernameUint8 = nacl.util.decodeUTF8(username);                            // Byte Array
+      var usernameHashedUint8 = nacl.hash(usernameUint8);                            // SHA-512, 64 Bytes
+      var masterKeyUint8 = sha256.hmac(passPhraseUint8, usernameHashedUint8);        // SHA-256 HMAC, 32 Bytes
 
-    // Base64 encode the PBKDF2 key.
-    pbkdf2KeyBase64 = nacl.util.encodeBase64(pbkdf2Key);
+      // Construct a salt for PBKDF2 and pass it through SHA-512
+      var paramsCombined = username + '@' + host + ':v' + version + ':' + extraSalt; // String
+      var paramsCombinedUint8 = nacl.util.decodeUTF8(paramsCombined);                // Byte Array
+      var pbkdf2SaltUint8 = nacl.hash(paramsCombinedUint8);                          // SHA-512, 64 Bytes
 
-    // Take only the first N bytes of the generated password.
-    password = pbkdf2KeyBase64.substring(0, pbkdf2KeyBase64Len);
+      // Pass h(passphrase, username) as masterKeyUint8
+      // Pass h(username | host | version | extraSalt) as pbkdf2SaltUint8
+      // 25,000 rounds
+      // Output 32 Bytes
+      var pbkdf2Uint8 = sha256.pbkdf2(masterKeyUint8, pbkdf2SaltUint8, 25000, 32);  // PBKDF2, 32 Bytes
 
-    // calc the estimated entropy of the generated password.
-    zxcvbnForPassword = zxcvbn(password);
+      // calculate a symbol from last byte
+      var lastByte = pbkdf2Uint8[31];
+      var symbols = ['!', '@', '#', '$', '%', '?', '&', '*', '+', '-'];
+      var symbolIndexForByte = lastByte % 10;
+      var chosenSymbol = symbols[symbolIndexForByte];
 
-    return {username: username, host: host, password: password, passwordEntropy: zxcvbnForPassword.entropy};
+      // calculate a number from second to last byte
+      var secondToLastByte = pbkdf2Uint8[30];
+      var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      var numberIndexForByte = secondToLastByte % 10;
+      var chosenNumber = numbers[numberIndexForByte];
+
+      // Convert the PBKDF2 output to Base 64 (does not include extra number or symbol yet)
+      var pbkdf2Base64 = nacl.util.encodeBase64(pbkdf2Uint8);                       // Base 64 String
+
+      // Take only the first N bytes of the Base 64 encoded password as the final password.
+      // Append a deterministically chosen symbol and number to ensure meeting most password requirements
+      var password = pbkdf2Base64.substring(0, 18) + chosenSymbol + chosenNumber;  // Partial Base 64 String
+
+      // Calc the estimated entropy of the final encoded password.
+      var zxcvbnPassword = zxcvbn(password);
+
+      return {username: username, host: host, password: password,
+              passphraseEntropy: zxcvbnPassphrase.entropy,
+              passwordEntropy: zxcvbnPassword.entropy};
   } else {
-    return null;
+      return null;
   }
 }
 
+// http://www.example.com/foo/index.html => www.example.com
+// http://127.0.0.1/foo/index.html => 127.0.0.1
 function extractHostFromUri(uri) {
     var domainMatcher = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/;
     var ipMatcher = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
@@ -57,11 +74,11 @@ function extractHostFromUri(uri) {
     }
 }
 
-function computeSaltInWords(username, domain, extraSalt) {
-  if (username && domain && extraSalt.length >= 1) {
-    return username + '@' + domain + ':*****';
-  } else if (username && domain && extraSalt === '') {
-    return username + '@' + domain;
+function computeSaltInWords(username, domain, version, extraSalt) {
+  if (username && domain && version >= 1 && extraSalt.length >= 1) {
+    return username + '@' + domain + ':v' + version + ':*****';
+  } else if (username && domain && version >= 1 && extraSalt === '') {
+    return username + '@' + domain + ':v' + version ;
   } else {
     return null;
   }
@@ -76,11 +93,41 @@ var delay = (function(){
   };
 })();
 
+function updatePasswordOutputContainer() {
+
+    // delay execution for 500ms after keyups stop.
+    delay(function(){
+        // force password strength update
+        $("#keyPassphraseInput").pwstrength("forceUpdate");
+
+        var basePassphrase = $('#keyPassphraseInput').val();
+        var username = $('#usernameInput').val();
+        var siteUri = $('#domainInput').val();
+        var version = $('#versionInput').val();
+        var extraSalt = $('#tokenInput').val();
+
+        var passwordObj = computePassword(basePassphrase, username, siteUri, version, extraSalt);
+
+        if (passwordObj && passwordObj.username && passwordObj.host && passwordObj.password) {
+            $("#passwordOutput").text(passwordObj.password);
+            $("#passwordEntropy").text(passwordObj.passwordEntropy);
+            $("#sanitizedSaltInWords").text(computeSaltInWords(passwordObj.username, passwordObj.host, version, extraSalt));
+            $("#passwordOutputContainer").slideDown();
+        } else {
+            $("#passwordOutput").text('');
+            $("#sanitizedSaltInWords").text('');
+            $("#passwordOutputContainer").slideUp();
+        }
+    }, 400 );
+
+}
+
 $(document).ready(function () {
     'use strict';
 
     $("#passwordOutputContainer").hide();
 
+    // Configure the password strength meter.
     // https://github.com/ablanco/jquery.pwstrength.bootstrap
     $('#keyPassphraseInput').pwstrength({
         ui: {
@@ -93,32 +140,23 @@ $(document).ready(function () {
         }
     });
 
+    // All form control elements keyup
     $('.form-control').on('keyup', function () {
+        updatePasswordOutputContainer();
+    });
 
-        // delay execution for 500ms after keyups stop.
-        delay(function(){
-            // force password strength update
-            $("#keyPassphraseInput").pwstrength("forceUpdate");
+    // Special handling for the HTML5 scroll arrows for a number field
+    // https://stackoverflow.com/questions/5669207/html5-event-listener-for-number-input-scroll-chrome-only
+    $('#versionInput').click(function(){
+        updatePasswordOutputContainer();
+    });
 
-            var basePassphrase = $('#keyPassphraseInput').val();
-            var username = $('#usernameInput').val();
-            var siteUri = $('#domainInput').val();
-            var extraSalt = $('#tokenInput').val();
+    $('#versionInput').change(function(){
+        updatePasswordOutputContainer();
+    });
 
-            var passwordObj = computePassword(basePassphrase, username, siteUri, extraSalt);
-
-            if (passwordObj && passwordObj.username && passwordObj.host && passwordObj.password) {
-                $("#passwordOutput").text(passwordObj.password);
-                $("#passwordEntropy").text(passwordObj.passwordEntropy);
-                $("#sanitizedSaltInWords").text(computeSaltInWords(passwordObj.username, passwordObj.host, extraSalt));
-                $("#passwordOutputContainer").slideDown();
-            } else {
-                $("#passwordOutput").text('');
-                $("#sanitizedSaltInWords").text('');
-                $("#passwordOutputContainer").slideUp();
-            }
-        }, 400 );
-
+    $('#versionInput').keypress(function(){
+        updatePasswordOutputContainer();
     });
 
 });
