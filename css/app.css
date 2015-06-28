@@ -1,0 +1,12 @@
+body {
+  padding-top: 50px;
+}
+
+#passwordOutputContainer {
+  display: inline-block;
+  width: 100%;
+}
+
+#passwordOutput {
+  font-size: 18px;
+}

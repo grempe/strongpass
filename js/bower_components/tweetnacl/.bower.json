@@ -1,0 +1,46 @@
+{
+  "name": "tweetnacl",
+  "version": "0.13.1",
+  "homepage": "https://dchest.github.io/tweetnacl-js",
+  "authors": [
+    "TweetNaCl.js Contributors"
+  ],
+  "description": "Port of TweetNaCl cryptographic library to JavaScript",
+  "main": "nacl.js",
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "crypto",
+    "cryptography",
+    "curve25519",
+    "ed25519",
+    "encrypt",
+    "hash",
+    "key",
+    "nacl",
+    "poly1305",
+    "public",
+    "salsa20",
+    "signatures"
+  ],
+  "license": "Public domain",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "package.json"
+  ],
+  "_release": "0.13.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.13.1",
+    "commit": "abfbce7c68c8ad0b3b8a90b769e1f67885237aac"
+  },
+  "_source": "git://github.com/dchest/tweetnacl-js.git",
+  "_target": "~0.13.1",
+  "_originalSource": "tweetnacl",
+  "_direct": true
+}

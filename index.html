@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="An offline, deterministic, cryptographically strong, password generator.">
+    <title>Strong Pass - Secure Password Generator</title>
+    <link href="favicon.ico" rel="icon" type="image/x-icon" />
+    <link rel="stylesheet" href="js/bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/app.css" type="text/css">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Strong Pass</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+
+      <div class="page-header">
+        <h1 id="listTitleHeader">Strong Pass&nbsp;<small>an offline, deterministic, cryptographically strong, password generator.</small></h1>
+        <p class="lead">
+           We all need strong passwords that are easy to remember. And by strong, I mean cryptographically strong, not a 'l33t' 'pa55w0rD'. Use this tool to generate strong passwords from a single passphrase that you can remember and attributes of the site you want to use the password on. Just type in your passphrase (we won't allow weak ones), your username, and paste in the address of the site. What comes out is a strong password that you can always re-discover as long as you type in those three attributes the same next time. Use a hardware token that stores a strong extra 'salt' for extra second factor security. This site sends no information to any server. It works completely offline in your browser.
+        </p>
+      </div>
+
+      <form id="inputForm" data-toggle="validator">
+        <div class="form-group">
+          <label for="keyPassphraseInput">Passphrase (secret, <a href="https://grempe.github.io/diceware/" target="_blank">Need one?</a>)</label>
+          <input type="password" class="form-control" id="keyPassphraseInput" placeholder="a cryptographically strong passphrase" minlength="12" required="required" autofocus="true">
+          <span class="help-block with-errors"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="tokenInput">Hardware Token Salt (optional, secret, <a href="http://amzn.to/1Lviktk" target="_blank">Need one?</a>)</label>
+          <input type="password" class="form-control" id="tokenInput" placeholder="extra salt">
+          <span class="help-block with-errors"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="usernameInput">Site Username (public)</label>
+          <input type="text" class="form-control" id="usernameInput" placeholder="myname@gmail.com" required="required">
+          <span class="help-block with-errors"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="domainInput">Site URI (public, only DNS hostname or IP address extracted)</label>
+          <input type="text" class="form-control" id="domainInput" placeholder="https://www.example.com/login" required="required">
+          <span class="help-block with-errors"></span>
+        </div>
+
+      </form>
+
+      <div id="passwordOutputContainer" class="well">
+        <p><strong>Generated Password</strong></p>
+        <p><code id="passwordOutput"></code></p>
+        <p><small class="text-muted"><strong>salt:</strong> <span id="sanitizedSaltInWords"></span></small></p>
+        <p><small class="text-muted"><strong>entropy:</strong> ~<span id="passwordEntropy"></span> bits</small></p>
+      </div>
+
+      <hr />
+
+      <br />
+
+      <h3 class="text-muted">Frequently Asked Questions</h3>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">What does it do?</h3>
+        </div>
+        <div class="panel-body">
+          <p>This application generates strong passwords by combining a strong passphrase, a username, and a DNS hostname plus optional extra 'salt' from a hardware token like the <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>. Hardware token salt adds a form of second factor (something you have) to the passphrase (something you know). Your passphrase, and the optional salt, must be kept private and never used elsewhere. The username and URI are assumed public. A cryptographic key derivation function (PBKDF2) is used to derive the password from the attributes you provide. The same attributes will always result in the same password. It is not possible to reverse the process and find your passphrase or salt from a stolen site password.</p>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Can this be trusted?</h3>
+        </div>
+        <div class="panel-body">
+          <p>I created this tool for my own use. I use it. You can trust it to do what it says. It will generate strong passwords locally in your browser and will never communicate anything that you enter, or the passwords it generates, out to the Internet. You are free to browse the source code, and you can easily run a copy locally by just opening the index.html file in your browser. In this case you can run this site completely offline, with your network disconnected. There are no cookies, no analytics tracking scripts, and it runs only over an TLS (HTTPS) connection.</p>
+        </div>
+      </div>
+
+    </div><!-- /.container -->
+
+    <!-- load third party libraries -->
+    <script src="js/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="js/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="js/bower_components/pwstrength-bootstrap/dist/pwstrength-bootstrap-1.2.7.min.js"></script>
+    <script src="js/bower_components/bootstrap-validator/dist/validator.min.js"></script>
+    <script src="js/bower_components/jsuri/Uri.js"></script>
+    <script src="js/bower_components/zxcvbn/zxcvbn.js"></script>
+    <script src="js/bower_components/fast-sha256/sha256.min.js"></script>
+    <script src="js/bower_components/tweetnacl/nacl-fast.min.js"></script>
+
+    <!-- core application JS -->
+    <script src="js/main.js"></script>
+
+  </body>
+
+</html>
