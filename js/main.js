@@ -3,7 +3,7 @@ function computePassword(basePassPhrase, username, siteUri, extraSalt) {
       hostnameValid, salt, pbkdf2Key, pbkdf2KeyBase64,
       pbkdf2KeyBase64Len, password, passwordEntropy;
 
-  pbkdf2Rounds = 250000;   // number of PBKDF2 rounds
+  pbkdf2Rounds = 25000;    // number of PBKDF2 rounds
   pbkdf2KeyLen = 32;       // output key length in bytes
   pbkdf2KeyBase64Len = 24; // the generated password is the first n chars of pbkdf2Key Base64 output
 
