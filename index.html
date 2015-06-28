@@ -95,6 +95,23 @@
         </div>
       </div>
 
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">What is the algorithm used to generate passwords?</h3>
+        </div>
+        <div class="panel-body">
+          <p>Here is a pseudocode version of the algorithm:</p>
+          <code>
+            masterKey  = sha256.hmac(passphrase, sha512(username))<br />
+            salt       = sha512(username + hostname + version + tokenSalt)<br />
+            derivedKey = pbkdf2(masterKey, salt, 25000 rounds, 32 Bytes Output)<br />
+            symbol     = lookupSymbol(derivedKey[31] % 10)<br />
+            number     = lookupNumber(derivedKey[30] % 10)<br />
+            password   = first18Chars(derivedKey) + symbol + number
+          </code>
+        </div>
+      </div>
+
     </div><!-- /.container -->
 
     <!-- load third party libraries -->
