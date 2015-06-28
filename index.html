@@ -33,32 +33,32 @@
 
       <form id="inputForm" data-toggle="validator">
         <div class="form-group">
-          <label for="keyPassphraseInput">Passphrase (secret, <a href="https://grempe.github.io/diceware/" target="_blank">Need one?</a>)</label>
-          <input type="password" class="form-control" id="keyPassphraseInput" placeholder="a cryptographically strong passphrase" minlength="12" required="required" autofocus="true">
+          <label for="keyPassphraseInput">Passphrase (<a href="https://grempe.github.io/diceware/" target="_blank">Need one?</a>)</label>
+          <input type="password" class="form-control" id="keyPassphraseInput" placeholder="a cryptographically strong passphrase" minlength="12" required="required" data-error="Your passphrase is too weak. Strength meter must be in the green." autofocus="true">
           <span class="help-block with-errors"></span>
         </div>
 
         <div class="form-group">
-          <label for="tokenInput">Hardware Token Salt (optional, secret, <a href="http://amzn.to/1Lviktk" target="_blank">Need one?</a>)</label>
+          <label for="tokenInput">Hardware Token Salt (optional, <a href="http://amzn.to/1Lviktk" target="_blank">Need one?</a>)</label>
           <input type="password" class="form-control" id="tokenInput" placeholder="extra salt">
           <span class="help-block with-errors"></span>
         </div>
 
         <div class="form-group">
-          <label for="usernameInput">Site Username (public)</label>
-          <input type="text" class="form-control" id="usernameInput" placeholder="myname@gmail.com" required="required">
+          <label for="usernameInput">Login Username or application name (case-insensitive)</label>
+          <input type="text" class="form-control" id="usernameInput" placeholder="myname@gmail.com | 1password" data-error="You must provide a login username or application name." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
         <div class="form-group">
-          <label for="domainInput">Site URI (public, only DNS hostname or IP address extracted)</label>
-          <input type="text" class="form-control" id="domainInput" placeholder="https://www.example.com/login" required="required">
+          <label for="domainInput">Site URI (case-insensitive, only DNS host or IP address portion used)</label>
+          <input type="text" class="form-control" id="domainInput" placeholder="https://www.example.com/login" data-error="You must provide a URL, DNS hostname, or IP address." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
         <div class="form-group">
-          <label for="versionInput">Site Password Version Number</label>
-          <input type="number" class="form-control" id="versionInput" value="1" min="1" max="99" required="required">
+          <label for="versionInput">Version Number (1-999)</label>
+          <input type="number" class="form-control" id="versionInput" value="1" min="1" max="999" data-error="You must provide a version number between 1 and 999. Defaults to 1." required="required">
           <span class="help-block with-errors"></span>
         </div>
 

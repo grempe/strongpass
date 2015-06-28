@@ -8,6 +8,12 @@ function computePassword(basePassPhrase, username, siteUri, version, extraSalt) 
 
   if (zxcvbnPassphrase.score >= 4 && username.length >= 1 && host && version >= 1) {
 
+      // normalize the public params
+      // some browsers, especially on mobile, will auto-capitalize
+      // which will change the password results.
+      username = username.toLowerCase();
+      host = host.toLowerCase();
+
       // Generate a master key w/ HMAC-SHA-256, from passphrase and username
       var passPhraseUint8 = nacl.util.decodeUTF8(basePassPhrase);                    // Byte Array
       var usernameUint8 = nacl.util.decodeUTF8(username);                            // Byte Array
