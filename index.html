@@ -107,7 +107,7 @@
             derivedKey = pbkdf2(masterKey, salt, 25000 rounds, 32 Bytes Output)<br />
             symbol     = lookupSymbol(derivedKey[31] % 10)<br />
             number     = lookupNumber(derivedKey[30] % 10)<br />
-            password   = first18Chars(derivedKey) + symbol + number
+            password   = first18Chars(base64encode(derivedKey)) + symbol + number
           </code>
         </div>
       </div>
