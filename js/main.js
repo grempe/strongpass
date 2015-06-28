@@ -1,4 +1,19 @@
-function computePassword(basePassPhrase, username, siteUri, version, extraSalt) {
+function computePassword(basePassPhrase, usernameOrAppname, siteUri, version, extraSalt) {
+
+  // trim leading and trailing whitespace from all fields
+  basePassPhrase = $.trim(basePassPhrase);
+  usernameOrAppname = $.trim(usernameOrAppname);
+  siteUri = $.trim(siteUri);
+  version = $.trim(version);
+  extraSalt = $.trim(extraSalt);
+
+  // normalize the non-secret params
+  // some browsers, especially on mobile, will auto-capitalize
+  // which will change the password results.
+  usernameOrAppname = usernameOrAppname.toLowerCase();
+  siteUri = siteUri.toLowerCase();
+  version = parseInt(version);
+
   // Estimate base password entropy with ZXCVBN
   // https://blogs.dropbox.com/tech/2012/04/zxcvbn-realistic-password-strength-estimation/
   // https://dl.dropboxusercontent.com/u/209/zxcvbn/test/index.html
@@ -6,27 +21,21 @@ function computePassword(basePassPhrase, username, siteUri, version, extraSalt) 
 
   var host = extractHostFromUri(siteUri);
 
-  if (zxcvbnPassphrase.score >= 4 && username.length >= 1 && host && version >= 1) {
-
-      // normalize the public params
-      // some browsers, especially on mobile, will auto-capitalize
-      // which will change the password results.
-      username = username.toLowerCase();
-      host = host.toLowerCase();
+  if (zxcvbnPassphrase.score >= 4 && usernameOrAppname.length >= 1 && host && version >= 1) {
 
       // Generate a master key w/ HMAC-SHA-256, from passphrase and username
-      var passPhraseUint8 = nacl.util.decodeUTF8(basePassPhrase);                    // Byte Array
-      var usernameUint8 = nacl.util.decodeUTF8(username);                            // Byte Array
-      var usernameHashedUint8 = nacl.hash(usernameUint8);                            // SHA-512, 64 Bytes
-      var masterKeyUint8 = sha256.hmac(passPhraseUint8, usernameHashedUint8);        // SHA-256 HMAC, 32 Bytes
+      var passPhraseUint8 = nacl.util.decodeUTF8(basePassPhrase);                       // Byte Array
+      var usernameOrAppnameUint8 = nacl.util.decodeUTF8(usernameOrAppname);             // Byte Array
+      var usernameOrAppnameHashedUint8 = nacl.hash(usernameOrAppnameUint8);             // SHA-512, 64 Bytes
+      var masterKeyUint8 = sha256.hmac(passPhraseUint8, usernameOrAppnameHashedUint8);  // SHA-256 HMAC, 32 Bytes
 
       // Construct a salt for PBKDF2 and pass it through SHA-512
-      var paramsCombined = username + '@' + host + ':v' + version + ':' + extraSalt; // String
-      var paramsCombinedUint8 = nacl.util.decodeUTF8(paramsCombined);                // Byte Array
-      var pbkdf2SaltUint8 = nacl.hash(paramsCombinedUint8);                          // SHA-512, 64 Bytes
+      var paramsCombined = usernameOrAppname + '@' + host + ':v' + version + ':' + extraSalt; // String
+      var paramsCombinedUint8 = nacl.util.decodeUTF8(paramsCombined);                         // Byte Array
+      var pbkdf2SaltUint8 = nacl.hash(paramsCombinedUint8);                                   // SHA-512, 64 Bytes
 
-      // Pass h(passphrase, username) as masterKeyUint8
-      // Pass h(username | host | version | extraSalt) as pbkdf2SaltUint8
+      // Pass h(passphrase, usernameOrAppname) as masterKeyUint8
+      // Pass h(usernameOrAppname | host | version | extraSalt) as pbkdf2SaltUint8
       // 25,000 rounds
       // Output 32 Bytes
       var pbkdf2Uint8 = sha256.pbkdf2(masterKeyUint8, pbkdf2SaltUint8, 25000, 32);  // PBKDF2, 32 Bytes
@@ -53,7 +62,7 @@ function computePassword(basePassPhrase, username, siteUri, version, extraSalt) 
       // Calc the estimated entropy of the final encoded password.
       var zxcvbnPassword = zxcvbn(password);
 
-      return {username: username, host: host, password: password,
+      return {usernameOrAppname: usernameOrAppname, host: host, password: password,
               passphraseEntropy: zxcvbnPassphrase.entropy,
               passwordEntropy: zxcvbnPassword.entropy};
   } else {
@@ -80,11 +89,11 @@ function extractHostFromUri(uri) {
     }
 }
 
-function computeSaltInWords(username, domain, version, extraSalt) {
-  if (username && domain && version >= 1 && extraSalt.length >= 1) {
-    return username + '@' + domain + ':v' + version + ':*****';
-  } else if (username && domain && version >= 1 && extraSalt === '') {
-    return username + '@' + domain + ':v' + version ;
+function computeSaltInWords(usernameOrAppname, domain, version, extraSalt) {
+  if (usernameOrAppname && domain && version >= 1 && extraSalt.length >= 1) {
+    return usernameOrAppname + '@' + domain + ':v' + version + ':*****';
+  } else if (usernameOrAppname && domain && version >= 1 && extraSalt === '') {
+    return usernameOrAppname + '@' + domain + ':v' + version ;
   } else {
     return null;
   }
@@ -107,17 +116,17 @@ function updatePasswordOutputContainer() {
         $("#keyPassphraseInput").pwstrength("forceUpdate");
 
         var basePassphrase = $('#keyPassphraseInput').val();
-        var username = $('#usernameInput').val();
+        var usernameOrAppname = $('#usernameOrAppnameInput').val();
         var siteUri = $('#domainInput').val();
         var version = $('#versionInput').val();
         var extraSalt = $('#tokenInput').val();
 
-        var passwordObj = computePassword(basePassphrase, username, siteUri, version, extraSalt);
+        var passwordObj = computePassword(basePassphrase, usernameOrAppname, siteUri, version, extraSalt);
 
-        if (passwordObj && passwordObj.username && passwordObj.host && passwordObj.password) {
+        if (passwordObj && passwordObj.usernameOrAppname && passwordObj.host && passwordObj.password) {
             $("#passwordOutput").text(passwordObj.password);
             $("#passwordEntropy").text(passwordObj.passwordEntropy);
-            $("#sanitizedSaltInWords").text(computeSaltInWords(passwordObj.username, passwordObj.host, version, extraSalt));
+            $("#sanitizedSaltInWords").text(computeSaltInWords(passwordObj.usernameOrAppname, passwordObj.host, version, extraSalt));
             $("#passwordOutputContainer").slideDown();
         } else {
             $("#passwordOutput").text('');

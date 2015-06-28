@@ -27,7 +27,7 @@
       <div class="page-header">
         <h1 id="listTitleHeader">Strong Pass&nbsp;<small>an offline, deterministic, cryptographically strong, password generator.</small></h1>
         <p class="lead">
-           We all need strong passwords that are easy to remember. And by strong, I mean cryptographically strong, not a 'l33t' 'pa55w0rD'. Use this tool to generate strong passwords from a single passphrase that you can remember and attributes of the site you want to use the password on. Just type in your passphrase (we won't allow weak ones), your username, and paste in the address of the site. What comes out is a strong password that you can always re-discover as long as you type in those three attributes the same next time. Use a hardware token that stores a strong extra 'salt' for extra second factor security. This site sends no information to any server. It works completely offline in your browser.
+           We all need strong passwords that are easy to remember. And by strong, I mean cryptographically strong, not a 'l33t' 'pa55w0rD'. Use this tool to generate strong passwords from a single passphrase that you can remember and attributes of the site you want to use the password on. Just type in your passphrase (we won't allow weak ones), your username or application name, and paste in the address of the site. What comes out is a strong password that you can always re-discover as long as you type in those three attributes the same next time. Use a hardware token that stores a strong extra 'salt' for extra second factor security. This site sends no information to any server. It works completely offline in your browser.
         </p>
       </div>
 
@@ -45,8 +45,8 @@
         </div>
 
         <div class="form-group">
-          <label for="usernameInput">Login Username or application name (case-insensitive)</label>
-          <input type="text" class="form-control" id="usernameInput" placeholder="myname@gmail.com | 1password" data-error="You must provide a login username or application name." required="required">
+          <label for="usernameOrAppnameInput">Login Username or application name (case-insensitive)</label>
+          <input type="text" class="form-control" id="usernameOrAppnameInput" placeholder="myname@gmail.com | 1password" data-error="You must provide a login username or application name." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
@@ -82,7 +82,7 @@
           <h3 class="panel-title">What does it do?</h3>
         </div>
         <div class="panel-body">
-          <p>This application generates strong passwords by combining a strong passphrase, a username, and a DNS hostname plus optional extra 'salt' from a hardware token like the <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>. Hardware token salt adds a form of second factor (something you have) to the passphrase (something you know). Your passphrase, and the optional salt, must be kept private and never used elsewhere. The username and URI are assumed public. A cryptographic key derivation function (PBKDF2) is used to derive the password from the attributes you provide. The same attributes will always result in the same password. It is not possible to reverse the process and find your passphrase or salt from a stolen site password.</p>
+          <p>This application generates strong passwords by combining a strong passphrase, a username or application name, a version number, a DNS hostname plus optional extra 'salt' from a hardware token like the <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>. Hardware token salt adds a form of second factor (something you have) to the passphrase (something you know). Your passphrase, and the optional salt, must be kept private and never used elsewhere. The username/application name and URI are assumed public. A cryptographic key derivation function (PBKDF2) is used to derive the password from the attributes you provide. The same attributes will always result in the same password. It is not possible to reverse the process and find your passphrase or salt from a stolen site password.</p>
         </div>
       </div>
 
@@ -100,10 +100,10 @@
           <h3 class="panel-title">What is the algorithm used to generate passwords?</h3>
         </div>
         <div class="panel-body">
-          <p>Here is a pseudocode version of the algorithm:</p>
+          <p>Here is a pseudocode version of the algorithm. Leading and trailing whitespace is stripped from all fields.</p>
           <code>
-            masterKey  = sha256.hmac(passphrase, sha512(username))<br />
-            salt       = sha512(username + hostname + version + tokenSalt)<br />
+            masterKey  = sha256.hmac(passphrase, sha512(downcase(usernameOrAppname)))<br />
+            salt       = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)<br />
             derivedKey = pbkdf2(masterKey, salt, 25000 rounds, 32 Bytes Output)<br />
             symbol     = lookupSymbol(derivedKey[31] % 10)<br />
             number     = lookupNumber(derivedKey[30] % 10)<br />
