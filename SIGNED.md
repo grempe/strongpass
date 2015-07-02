@@ -2,13 +2,13 @@
 ```
 -----BEGIN PGP SIGNATURE-----
 
-iQEcBAABCgAGBQJVkHYHAAoJEIXIECPZ4/wvN3wH/R5cuj38UPfHHt+q258a2Jki
-9nAqTg1THvofDozHF300CNHLQfokpJv96mpyeLXJpC3uY1l3m0xG+H/K3pemEaUC
-B4Ta2JFA0sqD4mQI6hVvR6eR/kY8zsD8/tzxm4WyOxjEYMZDKz+Ai2Meo7RtdlQH
-k4nsiMYoNV2JhJ8rU5pEtrqhEr15U/RI+yYKzq/dqDmgx1sGRRCqocNGR+/n2SC9
-I4krzln2oEde5YZfY/HB0mrWlOVieZClGLQ1ElIbP52k9nPgwOy5xMKoDo4eLmnE
-pLRwni23sa2mSIbHjNeQeaScD2ZtXRYnOfhCUdz97/CHBa8AsaNHroU4UMRWTOM=
-=MljK
+iQEcBAABCgAGBQJVlZLoAAoJEIXIECPZ4/wv8XQH/2U+uJdHpKgI6olCafutfSGq
+rt4xVb0Besu5KlJ0t4lSDuRavPWiYbYIG37jIIGu0MDv9VR7GmbM0I+lbTlnYd4p
+nQNIo4JlOnEz4GQYS6beTDrhy4Ki4AD2BqsLdh/cVcpmP9DOCfPTWpjBYIUMbAUA
+bmQeKOyjQcpDe5MCAx6KGR9R02LwTHH4z4wUAJYUFk8QzyvVtnHqbt6MwdeOW1vr
+Io24DZJDdUB+VbK3BDrkAsODI0x+p8//kqcYamhc7htIAuQj6NMJoRM5kVuM8EU1
+rO8re8kCFHaRYFkbgxN06gsdiS/Hn6lNAm0FQVjvYiQ1Ftjj69ELdoPbeNszLgI=
+=f2mC
 -----END PGP SIGNATURE-----
 
 ```
@@ -29,7 +29,7 @@ size     exec  file                                                contents
                  css/                                                                                                                                                                               
 140                app.css                                         b7c608b205b381ceb5abd952a171f391b3459e99b14f55b7a273ba3b877d7f6e                                                                 
 1150             favicon.ico                                       82ed9ccdc3238226178dae41e14e6a4427ee013407a06cd3f6a135172b9c1008|177bd80b7a1ac4acd4c8b520300b82c7ed0969eafea68e22e07af6b09d0a670b
-8158             index.html                                        eeff2928ecc3d1fbff14c80ce7ba54b74847829e5ffff35d43c8ef14aab76b53                                                                 
+8237             index.html                                        c1e61c1bc173b1472856d4cd8b54b6538bdc78172a5dd585b142d4841b2e5e92                                                                 
                  js/                                                                                                                                                                                
                    bower_components/                                                                                                                                                                
                      bootstrap/                                                                                                                                                                     
@@ -398,6 +398,13 @@ size     exec  file                                                contents
 33073                  nacl-fast.min.js                            9ba3d94f6bc031cafd4bece714572c009123c78e0f74073b60fcb0a9078bebc4                                                                 
 33738                  nacl.js                                     18b8b6da2fc949c6fe0d99cfaebd6829a3ea8717519f36753e2993fd7f89f6d4                                                                 
 19630                  nacl.min.js                                 fdb8a903171b92f27b5387337304286260e0d3278adde05d469412c444ee7389                                                                 
+                     tweetnacl-auth/                                                                                                                                                                
+902                    .bower.json                                 efeee5ada0e7006a6a3d794e55730e236e3101b17aaa4f8dc4a349b841704cf0                                                                 
+1245                   README.md                                   15ace27718d5c473d260999604356eb19ec4a6c9ddd9473c47514cc1b3efbaf9                                                                 
+612                    bower.json                                  191fa668991aaebc35dca627b864299cd4b11f29d7c0eb90b989efc20dbdf917                                                                 
+1261                   nacl-auth.js                                5ae7a8b6160e2d6d78035f89c6114847f513a9c2d67b50944be953751f7fcf72                                                                 
+715                    nacl-auth.min.js                            18dd09f8d9f1beae95887f0183d6e3411954baf3b208350b249c5ffc5eaf47fe                                                                 
+885                    package.json                                ab53ee6df479862b40f45c39b0682c23e6b999b1c4b5b69b18c4d8219ac574c6                                                                 
                      zxcvbn/                                                                                                                                                                        
 398                    .bower.json                                 fc6e38e88209a506fa81ee08ede855a2b5bcacedf12909fde09e38a707c649c3                                                                 
 52                     .gitignore                                  0d8f4a80f03b4d0b19aac6b593b54cf731739ae423d038244d2858db923e94fe                                                                 
@@ -455,7 +462,7 @@ size     exec  file                                                contents
 11358                    COPYING.txt                               cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30                                                                 
 5378434                  closure.jar                               a74f6e30d74a450a2ca21fe3a37a0418970cb3e219b2b6dab30c35a6f66ed540|f5416fb6e37634f14292f4bf286ee3d9d6d3e7f080ec7be68837af05de5bd442
 698403                 zxcvbn.js                                   0a3d6a34bc9757c5c469b98b77ad8acb500b847a7b57cfe62d8ba8a9206ce41e                                                                 
-7228               main.js                                         319a1b54a1bc35eed67392f3ac96f361840412db7d32e638d6614fba824fa558                                                                 
+7240               main.js                                         a27de2f82493450d7fb9f2960b39ebcd629a985aebff416fcbcc7534dac1b213                                                                 
 ```
 
 #### Ignore

@@ -24,10 +24,10 @@ function computePassword(basePassPhrase, usernameOrAppname, siteUri, version, ex
   if (zxcvbnPassphrase.score >= 4 && usernameOrAppname.length >= 1 && host && version >= 1) {
 
       // Generate a master key w/ HMAC-SHA-256, from passphrase and username
-      var passPhraseUint8 = nacl.util.decodeUTF8(basePassPhrase);                       // Byte Array
-      var usernameOrAppnameUint8 = nacl.util.decodeUTF8(usernameOrAppname);             // Byte Array
-      var usernameOrAppnameHashedUint8 = nacl.hash(usernameOrAppnameUint8);             // SHA-512, 64 Bytes
-      var masterKeyUint8 = sha256.hmac(passPhraseUint8, usernameOrAppnameHashedUint8);  // SHA-256 HMAC, 32 Bytes
+      var passPhraseUint8 = nacl.util.decodeUTF8(basePassPhrase);                          // Byte Array
+      var usernameOrAppnameUint8 = nacl.util.decodeUTF8(usernameOrAppname);                // Byte Array
+      var usernameOrAppnameHashedUint8 = nacl.hash(usernameOrAppnameUint8);                // SHA-512, 64 Bytes
+      var masterKeyUint8 = nacl.auth.full(passPhraseUint8, usernameOrAppnameHashedUint8);  // HMAC-SHA-512, 64 Bytes
 
       // Construct a salt for PBKDF2 and pass it through SHA-512
       var paramsCombined = usernameOrAppname + '@' + host + ':v' + version + ':' + extraSalt; // String

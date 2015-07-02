@@ -102,7 +102,7 @@
         <div class="panel-body">
           <p>Here is a pseudocode version of the algorithm. Leading and trailing whitespace is stripped from all fields.</p>
           <code>
-            masterKey  = sha256.hmac(passphrase, sha512(downcase(usernameOrAppname)))<br />
+            masterKey  = hmacSha512(passphrase, sha512(downcase(usernameOrAppname)))<br />
             salt       = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)<br />
             derivedKey = pbkdf2(masterKey, salt, 25000 rounds, 32 Bytes Output)<br />
             symbol     = lookupSymbol(derivedKey[31] % 10)<br />
@@ -123,6 +123,7 @@
     <script src="js/bower_components/zxcvbn/zxcvbn.js"></script>
     <script src="js/bower_components/fast-sha256/sha256.min.js"></script>
     <script src="js/bower_components/tweetnacl/nacl-fast.min.js"></script>
+    <script src="js/bower_components/tweetnacl-auth/nacl-auth.min.js"></script>
 
     <!-- core application JS -->
     <script src="js/main.js"></script>
