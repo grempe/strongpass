@@ -82,16 +82,17 @@
           <h3 class="panel-title">What does it do?</h3>
         </div>
         <div class="panel-body">
-          <p>This application generates strong passwords by combining a strong passphrase, a username or application name, a version number, a DNS hostname plus optional extra 'salt' from a hardware token like the <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>. Hardware token salt adds a form of second factor (something you have) to the passphrase (something you know). Your passphrase, and the optional salt, must be kept private and never used elsewhere. The username/application name and URI are assumed public. A cryptographic key derivation function (PBKDF2) is used to derive the password from the attributes you provide. The same attributes will always result in the same password. It is not possible to reverse the process and find your passphrase or salt from a stolen site password.</p>
+          <p>This application generates strong passwords by combining a strong passphrase, a username or application name, a version number, a DNS hostname plus optional extra 'salt' from a hardware token like the <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>. Hardware token salt adds a form of second factor (something you have) to the passphrase (something you know). Your passphrase, and the optional salt, must be kept private and never used elsewhere. The username/application name and URI are assumed public. A cryptographic key derivation function (scrypt) is used to derive the password from the attributes you provide. The same attributes will always result in the same password. It is not possible to reverse the process and find your passphrase or salt from a stolen site password.</p>
         </div>
       </div>
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Can this be trusted?</h3>
+          <h3 class="panel-title">Is it safe?</h3>
         </div>
         <div class="panel-body">
           <p>I created this tool for my own use. I use it. You can trust it to do what it says. It will generate strong passwords locally in your browser and will never communicate anything that you enter, or the passwords it generates, out to the Internet. You are free to browse the <a href="https://github.com/grempe/strongpass" target="_blank">source code</a>, and you can easily run a local copy by just opening the <code>index.html</code> file in your browser. In this case you can run this site completely offline, with your network disconnected. There are no cookies, no analytics tracking scripts, and it runs only over a TLS (HTTPS) connection.</p>
+          <p>All that being said, I am not a cryptographer, and this code has not been reviewed in any serious way by cryptographers. I believe it is strong based on the fact that I am using published crypto primatives consistent with their recommended usage based on my own research. There is no cryptographic invention claimed. Read the source code and decide for yourself if its safe for you.</p>
         </div>
       </div>
 
@@ -104,7 +105,7 @@
           <code>
             masterKey  = hmacSha512(passphrase, sha512(downcase(usernameOrAppname)))<br />
             salt       = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)<br />
-            derivedKey = pbkdf2(masterKey, salt, 25000 rounds, 32 Bytes Output)<br />
+            derivedKey = scrypt(masterKey, salt, 16384, 8, 1, 32 Bytes Output)<br />
             symbol     = lookupSymbol(derivedKey[31] % 10)<br />
             number     = lookupNumber(derivedKey[30] % 10)<br />
             password   = first18Chars(base64encode(derivedKey)) + symbol + number
@@ -121,9 +122,9 @@
     <script src="js/bower_components/bootstrap-validator/dist/validator.min.js"></script>
     <script src="js/bower_components/jsuri/Uri.js"></script>
     <script src="js/bower_components/zxcvbn/zxcvbn.js"></script>
-    <script src="js/bower_components/fast-sha256/sha256.min.js"></script>
     <script src="js/bower_components/tweetnacl/nacl-fast.min.js"></script>
     <script src="js/bower_components/tweetnacl-auth/nacl-auth.min.js"></script>
+    <script src="js/bower_components/js-scrypt/browser/scrypt.js"></script>
 
     <!-- core application JS -->
     <script src="js/main.js"></script>

@@ -29,35 +29,58 @@ function computePassword(basePassPhrase, usernameOrAppname, siteUri, version, ex
       var usernameOrAppnameHashedUint8 = nacl.hash(usernameOrAppnameUint8);                // SHA-512, 64 Bytes
       var masterKeyUint8 = nacl.auth.full(passPhraseUint8, usernameOrAppnameHashedUint8);  // HMAC-SHA-512, 64 Bytes
 
-      // Construct a salt for PBKDF2 and pass it through SHA-512
+      // Construct a salt for key derivation and pass it through SHA-512
       var paramsCombined = usernameOrAppname + '@' + host + ':v' + version + ':' + extraSalt; // String
       var paramsCombinedUint8 = nacl.util.decodeUTF8(paramsCombined);                         // Byte Array
-      var pbkdf2SaltUint8 = nacl.hash(paramsCombinedUint8);                                   // SHA-512, 64 Bytes
+      var kdSaltUint8 = nacl.hash(paramsCombinedUint8);                                       // SHA-512, 64 Bytes
 
-      // Pass h(passphrase, usernameOrAppname) as masterKeyUint8
-      // Pass h(usernameOrAppname | host | version | extraSalt) as pbkdf2SaltUint8
-      // 25,000 rounds
-      // Output 32 Bytes
-      var pbkdf2Uint8 = sha256.pbkdf2(masterKeyUint8, pbkdf2SaltUint8, 25000, 32);  // PBKDF2, 32 Bytes
+      // scrypt : https://www.tarsnap.com/scrypt.html
+      //
+      // On choosing optimal work factors:
+      // https://stackoverflow.com/questions/11126315/what-are-optimal-scrypt-work-factors
+      //
+      // masterKeyUint8 = h(passphrase, usernameOrAppname)
+      // kdSaltUint8 = h(usernameOrAppname | host | version | extraSalt)
+      // L bytes of derived key material from a password passwd and a salt salt
+      // N, which must be a power of two, which will set the overall difficulty
+      //   of the computation. The scrypt paper uses 2^14 = 16384 for interactive
+      //   logins, and 2^20 = 1048576 for file encryption, but running in the
+      //   browser is slow so Your Mileage Will Almost Certainly Vary.
+      // r and p. r is a factor to control the blocksize for each mixing
+      //   loop (memory usage). p is a factor to control the number of
+      //   independent mixing loops (parallelism). Good values are
+      //   r = 8 and p = 1. See the scrypt paper for details on these parameters.
+      //   Choose wisely! Picking good values for N, r and p is important for
+      //   making your keys sufficiently hard to brute-force.
+      //
+      var scrypt = scrypt_module_factory();
+      var N = 16384; // 2^14 : 128×16384×8 = 16,777,216 bytes = 16 MB RAM, 16384 iterations.
+      var r = 8;     //
+      var p = 1;     //
+      var L = 32;    // Output Bytes
+      var kdBytesUint8 = scrypt.crypto_scrypt(masterKeyUint8, kdSaltUint8, N, r, p, L);
 
-      // calculate a symbol from last byte
-      var lastByte = pbkdf2Uint8[31];
+      // calculate a symbol from last byte to ensure every generated password
+      // has at least one symbol since the Base64 output doesn't guarantee.
+      var lastByte = kdBytesUint8[31];
       var symbols = ['!', '@', '#', '$', '%', '?', '&', '*', '+', '-'];
       var symbolIndexForByte = lastByte % 10;
       var chosenSymbol = symbols[symbolIndexForByte];
 
-      // calculate a number from second to last byte
-      var secondToLastByte = pbkdf2Uint8[30];
+      // calculate a number from second to last byte to ensure every generated
+      // password has at least one number since the Base64 output doesn't guarantee.
+      var secondToLastByte = kdBytesUint8[30];
       var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
       var numberIndexForByte = secondToLastByte % 10;
       var chosenNumber = numbers[numberIndexForByte];
 
-      // Convert the PBKDF2 output to Base 64 (does not include extra number or symbol yet)
-      var pbkdf2Base64 = nacl.util.encodeBase64(pbkdf2Uint8);                       // Base 64 String
+      // Convert the key derivation function output to Base 64 (does not include
+      // extra number or symbol yet)
+      var kdBytesBase64 = nacl.util.encodeBase64(kdBytesUint8); // Base 64 String
 
       // Take only the first N bytes of the Base 64 encoded password as the final password.
       // Append a deterministically chosen symbol and number to ensure meeting most password requirements
-      var password = pbkdf2Base64.substring(0, 18) + chosenSymbol + chosenNumber;  // Partial Base 64 String
+      var password = kdBytesBase64.substring(0, 18) + chosenSymbol + chosenNumber; // Partial Base 64 String
 
       // Calc the estimated entropy of the final encoded password.
       var zxcvbnPassword = zxcvbn(password);

@@ -2,13 +2,13 @@
 ```
 -----BEGIN PGP SIGNATURE-----
 
-iQEcBAABCgAGBQJVlZLoAAoJEIXIECPZ4/wv8XQH/2U+uJdHpKgI6olCafutfSGq
-rt4xVb0Besu5KlJ0t4lSDuRavPWiYbYIG37jIIGu0MDv9VR7GmbM0I+lbTlnYd4p
-nQNIo4JlOnEz4GQYS6beTDrhy4Ki4AD2BqsLdh/cVcpmP9DOCfPTWpjBYIUMbAUA
-bmQeKOyjQcpDe5MCAx6KGR9R02LwTHH4z4wUAJYUFk8QzyvVtnHqbt6MwdeOW1vr
-Io24DZJDdUB+VbK3BDrkAsODI0x+p8//kqcYamhc7htIAuQj6NMJoRM5kVuM8EU1
-rO8re8kCFHaRYFkbgxN06gsdiS/Hn6lNAm0FQVjvYiQ1Ftjj69ELdoPbeNszLgI=
-=f2mC
+iQEcBAABCgAGBQJVlb2AAAoJEIXIECPZ4/wvWi8IAKcQ5bYIb5BBTzgI0FpCHgGd
+QqaQvedrF+3wWS7PPC9+CFk0fg7nKiZ4eYrEVsCJEfVQDGpo9+9rxsb7Tdj4VuMD
+qwJEvR6En/dGCgCXqKFw9FVnKmZi3NvHRTRCLKveqPFobfGIZ4owIOExK8jZp+GL
+YZRgcvvuIpU86GkawVEURtJyPg6DTqMZbqzh/RZja+pTif5scM41PAQkKvytHXR2
+4bR/SuqE5z7Q7mVUVC/N42UVNlXOhc/PY6PBlLOl907isgjF37QHB+0ahRqWaXVI
+1+T1pMrPOj6JayDjiVuC+3yr3gh5y12tgTP71SZaCzyfWGUPvp/7rFg4WFcKkUQ=
+=A2Qp
 -----END PGP SIGNATURE-----
 
 ```
@@ -29,7 +29,7 @@ size     exec  file                                                contents
                  css/                                                                                                                                                                               
 140                app.css                                         b7c608b205b381ceb5abd952a171f391b3459e99b14f55b7a273ba3b877d7f6e                                                                 
 1150             favicon.ico                                       82ed9ccdc3238226178dae41e14e6a4427ee013407a06cd3f6a135172b9c1008|177bd80b7a1ac4acd4c8b520300b82c7ed0969eafea68e22e07af6b09d0a670b
-8237             index.html                                        c1e61c1bc173b1472856d4cd8b54b6538bdc78172a5dd585b142d4841b2e5e92                                                                 
+8629             index.html                                        875a7355f5e1001a7dd111f78dc65b1d71ec98f8150cdc05220636369abe9c49                                                                 
                  js/                                                                                                                                                                                
                    bower_components/                                                                                                                                                                
                      bootstrap/                                                                                                                                                                     
@@ -187,13 +187,6 @@ size     exec  file                                                contents
 5936                       validator.min.js                        642629e3c901ee05cd4566cad0cea08e2e0c8a91ddf63e244c5f88b58a089119                                                                 
                        js/                                                                                                                                                                          
 10467                    validator.js                              50206862a588f09ccc34ca1cf2eea572638f1ee718212ce1c0c3d798677ae9e7                                                                 
-                     fast-sha256/                                                                                                                                                                   
-866                    .bower.json                                 14c261647569aa38d4ab72f00135ff4d57017e258c8c88686d550c180182a68f                                                                 
-1437                   README.md                                   1507b8ff6ee0e31e2aa2934f9f07ea8afc22b5effb485abb29552aa9cb8e9ad5                                                                 
-582                    bower.json                                  87751b85901373331630a6c6bc6453950a3ce02721c1d3ec1445d31b3b17ee24                                                                 
-706                    package.json                                deed5f24ba6ab026d56123dce07b4f31b6122ada9b644130713494c292ee41dc                                                                 
-7474                   sha256.js                                   a39d8b5ed172e58916cdc3ca17cfb1204da5f02a62af83466a2748e2a238680f                                                                 
-4372                   sha256.min.js                               c87216797313e37b184fb1eaa3653cf830b26232966fc4a616c32b30b9381881                                                                 
                      jquery/                                                                                                                                                                        
 754                    .bower.json                                 605fb31b7ef0965dac0a01ed56cce48704bc3d0144be78cb3609748560091f8c                                                                 
 1099                   MIT-LICENSE.txt                             44254c9a91a4647b9192584f17b2d27bf43696ba1ea16b0e88ac7bd6bf0780f1                                                                 
@@ -307,6 +300,20 @@ size     exec  file                                                contents
 99                         support.js                              6af4fdfdc2c45e9484f457361350e81c0621473ea8339438a0ea69a3135ef958                                                                 
 86                         toString.js                             747232c0f775c352d9f2ae202cf6656b3572d50f73338e2f6cc2fdfea986ea60                                                                 
 1496                     wrap.js                                   95cb7c61096355173e427cccedd30322b190d3cec3c17b2b298d8906077f337a                                                                 
+                     js-scrypt/                                                                                                                                                                     
+721                    .bower.json                                 0203c890bbb8088ae1640e25e355df5b76a915e1657d1302e6246f1bb368da63                                                                 
+1046                   Makefile                                    f233936ebea1868f5397ed3d396263ee44a04499706bfaf1dc394ef70bb09b13                                                                 
+7217                   README.md                                   ca4b1d74842186b3d8cfdea34bd1ded1dec1ce5560d94e62a187d56d11262a38                                                                 
+465                    bower.json                                  7af3f297779b2067f20e66162acec234dedb0c3d94e0cb3e506fef5135bf35c2                                                                 
+                       browser/                                                                                                                                                                     
+246321                   scrypt.js                                 7d61c3d568fdba1dbf1ce52f14b6d7aaece55f2f6cf9c63ae0bdafcd8856459c                                                                 
+467                    config.h                                    c1a5a7fd5d4f6404ddc5af5df733bf457ec981c7a562b61ff302fa3e934ea953                                                                 
+83776                  scrypt-1.1.6.tgz                            dfd0d1a544439265bbb9b58043ad3c8ce50a3987b44a61b1d39fd7a3ed5b7fb8|fe110258a12bb5e8b6fe54518bbcea5e540394f700cf7c4e9cd2787b7d1ef6dc
+165                    scrypt_browser_prefix.js                    2e4857708787d127bdc6dda8ecf30bd38c3f920301b7ac3416611807597850e5                                                                 
+22                     scrypt_browser_suffix.js                    d663773b4273a684e20b4dd21f595e3f598450bf9cf036df081fc9b89c58f51f                                                                 
+4093                   scrypt_cooked.js                            ad786aaa6bba91f34d5647f802c304889973ffdd2920397e07352aa48a6a86a0                                                                 
+243                    test_scrypt_browser.html                    8036e565cbd47ebf5c73e109f7df9e79651c449791804f9a80650d31377d1012                                                                 
+2900                   test_scrypt_browser.js                      c50cb621d993d4ae82739a828767e062a7eaa3755bfd7b1066e7ba45905c3086                                                                 
                      jsuri/                                                                                                                                                                         
 417                    .bower.json                                 b9f259360cc67d94a1f30539c8c5e0ce9b24766c601282150a843936262fe303                                                                 
 38                     .gitignore                                  ac1293318d6888001a7e1401e71867134066f9eee00fbda7a8ecfb8b30570cc5                                                                 
@@ -462,7 +469,7 @@ size     exec  file                                                contents
 11358                    COPYING.txt                               cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30                                                                 
 5378434                  closure.jar                               a74f6e30d74a450a2ca21fe3a37a0418970cb3e219b2b6dab30c35a6f66ed540|f5416fb6e37634f14292f4bf286ee3d9d6d3e7f080ec7be68837af05de5bd442
 698403                 zxcvbn.js                                   0a3d6a34bc9757c5c469b98b77ad8acb500b847a7b57cfe62d8ba8a9206ce41e                                                                 
-7240               main.js                                         a27de2f82493450d7fb9f2960b39ebcd629a985aebff416fcbcc7534dac1b213                                                                 
+8661               main.js                                         6109cac16e4867df966252861800e5770520dded13ed1f39d011452da87f014d                                                                 
 ```
 
 #### Ignore
