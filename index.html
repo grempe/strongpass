@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="An offline, deterministic, cryptographically strong, password generator.">
-    <title>Strong Pass - Secure Password Generator</title>
+    <title>Strong Pass - Secure Password and Wallet Generator</title>
     <link href="favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" href="js/bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="css/app.css" type="text/css">
@@ -25,39 +25,53 @@
     <div class="container">
 
       <div class="page-header">
-        <h1 id="listTitleHeader">Strong Pass&nbsp;<small>an offline, deterministic, cryptographically strong, password generator.</small></h1>
+        <h1 id="listTitleHeader">Strong Pass&nbsp;<small>deterministic, cryptographically strong, passwords and bitcoin 'brain wallets'</small></h1>
         <p class="lead">
            We all need strong passwords that are easy to remember. And by strong, I mean cryptographically strong, not a 'l33t' 'pa55w0rD'. Use this tool to generate strong passwords from a single passphrase that you can remember and attributes of the site you want to use the password on. Just type in your passphrase (we won't allow weak ones), your username or application name, and paste in the address of the site. What comes out is a strong password that you can always re-discover as long as you type in those three attributes the same next time. Use a hardware token that stores a strong extra 'salt' for extra second factor security. This site sends no information to any server. It works completely offline in your browser.
         </p>
       </div>
 
+      <div class="form-group">
+        <label>What do you want to generate?</label><br />
+        <button type="button" id="webModeButton" class="modeSelector btn btn-default">Web password</button>
+        <button type="button" id="appModeButton" class="modeSelector btn btn-default">Application password</button>
+        <button type="button" id="btcModeButton" class="modeSelector btn btn-default">Bitcoin wallet</button>
+      </div>
+
       <form id="inputForm" data-toggle="validator">
-        <div class="form-group">
-          <label for="keyPassphraseInput">Passphrase (<a href="https://grempe.github.io/diceware/" target="_blank">Need one?</a>)</label>
-          <input type="password" class="form-control" id="keyPassphraseInput" placeholder="a cryptographically strong passphrase" minlength="12" required="required" data-error="Your passphrase is too weak. Strength meter must be in the green." autofocus="true">
+
+        <div id="keyPassphraseInputGroup" class="form-group">
+          <label for="keyPassphraseInput">Passphrase <small><span class="text-muted"><a href="https://grempe.github.io/diceware/" target="_blank" tabindex="-1">Need a strong passphrase you can remember? Try a 6+ word Diceware style passphrase.</a></span></small></label>
+          <input type="password" class="form-control" id="keyPassphraseInput" placeholder="a 'very strong' passphrase you can remember" minlength="11" required="required" data-error="Your passphrase is too weak. Strength meter must be in the green and say 'very strong'." autofocus="true">
           <span class="help-block with-errors"></span>
         </div>
 
-        <div class="form-group">
-          <label for="tokenInput">Hardware Token Salt (optional, <a href="http://amzn.to/1Lviktk" target="_blank">Need one?</a>)</label>
-          <input type="password" class="form-control" id="tokenInput" placeholder="extra salt">
+        <div id="tokenInputGroup" class="form-group">
+          <label for="tokenInput">Salt <small><span class="text-muted">optional, <a href="http://amzn.to/1Lviktk" target="_blank" tabindex="-1">Need a hardware token?</a></span></small></label>
+          <input type="password" class="form-control" id="tokenInput" placeholder="">
           <span class="help-block with-errors"></span>
         </div>
 
-        <div class="form-group">
-          <label for="usernameOrAppnameInput">Login Username or application name (case-insensitive)</label>
-          <input type="text" class="form-control" id="usernameOrAppnameInput" placeholder="myname@gmail.com | 1password" data-error="You must provide a login username or application name." required="required">
+        <div id="webUsernameInputGroup"class="form-group">
+          <label for="webUsernameInput">Username <small><span class="text-muted">case insensitive</span></small></label>
+          <input type="text" class="form-control" id="webUsernameInput" placeholder="myname@gmail.com" data-error="You must provide a login username." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
-        <div class="form-group">
-          <label for="domainInput">Site URI (case-insensitive, only DNS host or IP address portion used)</label>
-          <input type="text" class="form-control" id="domainInput" placeholder="https://www.example.com/login" data-error="You must provide a URL, DNS hostname, or IP address." required="required">
+        <div id="webDomainInputGroup" class="form-group">
+          <label for="webDomainInput">URL, domain, or IP address <small><span class="text-muted">case insensitive</span></small></label>
+          <input type="text" class="form-control" id="webDomainInput" placeholder="https://www.example.com/login" data-error="You must provide a URL, DNS hostname, or IP address." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
-        <div class="form-group">
-          <label for="versionInput">Version Number (1-999)</label>
+        <div id="appNameInputGroup" class="form-group">
+          <label for="appNameInput">Application name <small><span class="text-muted">case insensitive</span></small></label>
+          <input type="text" class="form-control" id="appNameInput" placeholder="1password" data-error="You must provide an application name." required="required">
+          <span class="help-block with-errors"></span>
+        </div>
+
+        <div id="versionInputGroup" class="form-group">
+          <label for="versionInput">Version Number <small><span class="text-muted">1 - 999</span></small></label>
           <input type="number" class="form-control" id="versionInput" value="1" min="1" max="999" data-error="You must provide a version number between 1 and 999. Defaults to 1." required="required">
           <span class="help-block with-errors"></span>
         </div>
@@ -65,10 +79,32 @@
       </form>
 
       <div id="passwordOutputContainer" class="well">
-        <p><strong>Generated Password</strong></p>
+        <p><strong>Computed Password</strong></p>
         <p><code id="passwordOutput"></code></p>
-        <p><small class="text-muted"><strong>settings:</strong> <span id="sanitizedSaltInWords"></span></small></p>
+        <!-- <p><small class="text-muted"><strong>settings:</strong> <span id="sanitizedSaltInWords"></span></small></p> -->
         <p><small class="text-muted"><strong>entropy:</strong> ~<span id="passwordEntropy"></span> bits</small></p>
+      </div>
+
+      <div id="bitcoinOutputContainer" class="well">
+        <p><strong>Computed Bitcoin 'Brain Wallet'</strong></p>
+
+        <dl class="dl-horizontal">
+          <dt>private key</dt>
+          <dd><span id="bitcoinPrivateKey"></span></dd>
+          <dt>private key (<a href="https://en.bitcoin.it/wiki/Wallet_import_format" target="_blank">WIF</a>)</dt>
+          <dd><span id="bitcoinPrivateKeyWIF"></span></dd>
+          <dt>public key</dt>
+          <dd><span id="bitcoinPublicKey"></span></dd>
+          <dt>address</dt>
+          <dd><span id="bitcoinAddress"></span></dd>
+          <dt>address QR code</dt>
+          <dd>
+            <br />
+            <div id="qrcode"></div>
+            <small id="qrcodeAddress"></small>
+          </dd>
+        </dl>
+
       </div>
 
       <hr />
@@ -88,6 +124,32 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
+          <h3 class="panel-title">What do you mean by 'deterministic'?</h3>
+        </div>
+        <div class="panel-body">
+          <blockquote>
+            <p>In computer science, a deterministic algorithm is an algorithm which, given a particular input, will always produce the same output, with the underlying machine always passing through the same sequence of states. Deterministic algorithms are by far the most studied and familiar kind of algorithm, as well as one of the most practical, since they can be run on real machines efficiently.</p>
+            <p>Formally, a deterministic algorithm computes a mathematical function; a function has a unique value for any input in its domain, and the algorithm is a process that produces this particular value as output.</p>
+            <footer>Deterministic algorithm <cite title="Wikipedia"><a href="https://en.wikipedia.org/wiki/Deterministic_algorithm" target="_blank">Wikipedia</a></cite></footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">What do you mean by 'cryptographically strong'?</h3>
+        </div>
+        <div class="panel-body">
+          <blockquote>
+            <p>In computer science, a deterministic algorithm is an algorithm which, given a particular input, will always produce the same output, with the underlying machine always passing through the same sequence of states. Deterministic algorithms are by far the most studied and familiar kind of algorithm, as well as one of the most practical, since they can be run on real machines efficiently.</p>
+            <p>Formally, a deterministic algorithm computes a mathematical function; a function has a unique value for any input in its domain, and the algorithm is a process that produces this particular value as output.</p>
+            <footer>Deterministic algorithm <cite title="Wikipedia"><a href="https://en.wikipedia.org/wiki/Deterministic_algorithm" target="_blank">Wikipedia</a></cite></footer>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
           <h3 class="panel-title">Is it safe?</h3>
         </div>
         <div class="panel-body">
@@ -101,15 +163,19 @@
           <h3 class="panel-title">What is the algorithm used to generate passwords?</h3>
         </div>
         <div class="panel-body">
-          <p>Here is a pseudocode version of the algorithm. Leading and trailing whitespace is stripped from all fields.</p>
-          <code>
-            masterKey  = hmacSha512(passphrase, sha512(downcase(usernameOrAppname)))<br />
-            salt       = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)<br />
-            derivedKey = scrypt(masterKey, salt, 16384, 8, 1, 32 Bytes Output)<br />
-            symbol     = lookupSymbol(derivedKey[31] % 10)<br />
-            number     = lookupNumber(derivedKey[30] % 10)<br />
-            password   = first18Chars(base64encode(derivedKey)) + symbol + number
-          </code>
+          <p>Here is a pseudocode version of the algorithm. Leading and trailing whitespace is stripped from all input fields. You can view the full source code <a href="https://github.com/grempe/strongpass/blob/master/js/main.js" target="_blank">here</a>.</p>
+
+          <pre class="pre-scrollable">
+masterKey         = hmacSha512(passphrase, sha512(downcase(usernameOrAppname)))
+salt              = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)
+derivedKey        = scrypt(masterKey, salt, 16384, 8, 1, 64 Bytes Output)
+derivedKeyFirst32 = derivedKey[0, 32]
+derivedKeyLast32  = derivedKey[32, 64]
+symbol            = lookupSymbol(derivedKeyFirst32[31] % 10)
+number            = lookupNumber(derivedKeyFirst32[30] % 10)
+password          = first18Chars(base64encode(derivedKeyFirst32)) + symbol + number
+bitcoinKeypair    = generateKeypairFromKey(hex(derivedKeyLast32))
+          </pre>
         </div>
       </div>
 
@@ -125,6 +191,8 @@
     <script src="js/bower_components/tweetnacl/nacl-fast.min.js"></script>
     <script src="js/bower_components/tweetnacl-auth/nacl-auth.min.js"></script>
     <script src="js/bower_components/js-scrypt/browser/scrypt.js"></script>
+    <script src="js/bower_components/bitcore/bitcore.min.js"></script>
+    <script src="js/bower_components/jquery-qrcode/jquery.qrcode.min.js"></script>
 
     <!-- core application JS -->
     <script src="js/main.js"></script>
