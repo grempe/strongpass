@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="An offline, deterministic, cryptographically strong, password generator.">
-    <title>Strong Pass - Secure Password and Wallet Generator</title>
+    <title>Strong Pass - Secure Password and Bitcoin Wallet Generator</title>
     <link href="favicon.ico" rel="icon" type="image/x-icon" />
     <link rel="stylesheet" href="js/bower_components/bootstrap/dist/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="css/app.css" type="text/css">
@@ -25,53 +25,86 @@
     <div class="container">
 
       <div class="page-header">
-        <h1 id="listTitleHeader">Strong Pass&nbsp;<small>deterministic, cryptographically strong, passwords and bitcoin 'brain wallets'</small></h1>
+        <h1 id="listTitleHeader">Strong Pass&nbsp;
+          <small>a deterministic, cryptographically strong, password and bitcoin wallet generator</small>
+        </h1>
         <p class="lead">
-           We all need strong passwords that are easy to remember. And by strong, I mean cryptographically strong, not a 'l33t' 'pa55w0rD'. Use this tool to generate strong passwords from a single passphrase that you can remember and attributes of the site you want to use the password on. Just type in your passphrase (we won't allow weak ones), your username or application name, and paste in the address of the site. What comes out is a strong password that you can always re-discover as long as you type in those three attributes the same next time. Use a hardware token that stores a strong extra 'salt' for extra second factor security. This site sends no information to any server. It works completely offline in your browser.
+          We all need passwords that are strong and easy to remember. If you can remember one strong passphrase you can generate a password for any number of websites, local applications, or even Bitcoin wallets. The same passphrase and options will always result
+          in the same output being generated. You can rest assured that all cryptographic operations are done in your browser and no information is sent elsewhere or shared with anyone.
         </p>
       </div>
 
-      <div class="form-group">
-        <label>What do you want to generate?</label><br />
-        <button type="button" id="webModeButton" class="modeSelector btn btn-default">Web password</button>
-        <button type="button" id="appModeButton" class="modeSelector btn btn-default">Application password</button>
-        <button type="button" id="btcModeButton" class="modeSelector btn btn-default">Bitcoin wallet</button>
+      <div class="row">
+        <div class="col-sm-offset-3 col-sm-6 text-center">
+          <div class="btn-group" role="group" aria-label="Mode Selector">
+            <button type="button" id="webModeButton" class="modeSelector btn btn-default">Web password</button>
+            <button type="button" id="appModeButton" class="modeSelector btn btn-default">Application password</button>
+            <button type="button" id="btcModeButton" class="modeSelector btn btn-default">Bitcoin wallet</button>
+          </div>
+        </div>
       </div>
+
+      <br />
 
       <form id="inputForm" data-toggle="validator">
 
         <div id="keyPassphraseInputGroup" class="form-group">
-          <label for="keyPassphraseInput">Passphrase <small><span class="text-muted"><a href="https://grempe.github.io/diceware/" target="_blank" tabindex="-1">Need a strong passphrase you can remember? Try a 6+ word Diceware style passphrase.</a></span></small></label>
-          <input type="password" class="form-control" id="keyPassphraseInput" placeholder="a 'very strong' passphrase you can remember" minlength="11" required="required" data-error="Your passphrase is too weak. Strength meter must be in the green and say 'very strong'." autofocus="true">
+          <label for="keyPassphraseInput">Passphrase
+            <small>
+              <span class="text-muted"><a href="https://grempe.github.io/diceware/" target="_blank" tabindex="-1">Need a strong passphrase you can remember? Try a 6+ word Diceware style passphrase.</a></span>
+            </small>
+          </label>
+          <input type="password" class="form-control" id="keyPassphraseInput" placeholder="a 'very strong' passphrase you can remember" minlength="11" required="required" data-error="Your passphrase is too weak. Strength meter must be in the green and say 'very strong'."
+          autofocus="true">
           <span class="help-block with-errors"></span>
         </div>
 
         <div id="tokenInputGroup" class="form-group">
-          <label for="tokenInput">Salt <small><span class="text-muted">optional, <a href="http://amzn.to/1Lviktk" target="_blank" tabindex="-1">Need a hardware token?</a></span></small></label>
+          <label for="tokenInput">Salt
+            <small>
+              <span class="text-muted">optional, <a href="http://amzn.to/1Lviktk" target="_blank" tabindex="-1">Need a hardware token?</a></span>
+            </small>
+          </label>
           <input type="password" class="form-control" id="tokenInput" placeholder="">
           <span class="help-block with-errors"></span>
         </div>
 
-        <div id="webUsernameInputGroup"class="form-group">
-          <label for="webUsernameInput">Username <small><span class="text-muted">case insensitive</span></small></label>
+        <div id="webUsernameInputGroup" class="form-group">
+          <label for="webUsernameInput">Username
+            <small>
+              <span class="text-muted">case insensitive</span>
+            </small>
+          </label>
           <input type="text" class="form-control" id="webUsernameInput" placeholder="myname@gmail.com" data-error="You must provide a login username." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
         <div id="webDomainInputGroup" class="form-group">
-          <label for="webDomainInput">URL, domain, or IP address <small><span class="text-muted">case insensitive</span></small></label>
+          <label for="webDomainInput">URL, domain, or IP address
+            <small>
+              <span class="text-muted">case insensitive</span>
+            </small>
+          </label>
           <input type="text" class="form-control" id="webDomainInput" placeholder="https://www.example.com/login" data-error="You must provide a URL, DNS hostname, or IP address." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
         <div id="appNameInputGroup" class="form-group">
-          <label for="appNameInput">Application name <small><span class="text-muted">case insensitive</span></small></label>
+          <label for="appNameInput">Application name
+            <small>
+              <span class="text-muted">case insensitive</span>
+            </small>
+          </label>
           <input type="text" class="form-control" id="appNameInput" placeholder="1password" data-error="You must provide an application name." required="required">
           <span class="help-block with-errors"></span>
         </div>
 
         <div id="versionInputGroup" class="form-group">
-          <label for="versionInput">Version Number <small><span class="text-muted">1 - 999</span></small></label>
+          <label for="versionInput">Version Number
+            <small>
+              <span class="text-muted">1 - 999</span>
+            </small>
+          </label>
           <input type="number" class="form-control" id="versionInput" value="1" min="1" max="999" data-error="You must provide a version number between 1 and 999. Defaults to 1." required="required">
           <span class="help-block with-errors"></span>
         </div>
@@ -79,24 +112,42 @@
       </form>
 
       <div id="passwordOutputContainer" class="well">
-        <p><strong>Computed Password</strong></p>
-        <p><code id="passwordOutput"></code></p>
+        <p>
+          <strong>Computed Password</strong>
+        </p>
+        <p>
+          <code id="passwordOutput"></code>
+        </p>
         <!-- <p><small class="text-muted"><strong>settings:</strong> <span id="sanitizedSaltInWords"></span></small></p> -->
-        <p><small class="text-muted"><strong>entropy:</strong> ~<span id="passwordEntropy"></span> bits</small></p>
+        <p>
+          <small class="text-muted">
+            <strong>entropy:</strong> ~
+            <span id="passwordEntropy"></span> bits</small>
+        </p>
       </div>
 
       <div id="bitcoinOutputContainer" class="well">
-        <p><strong>Computed Bitcoin 'Brain Wallet'</strong></p>
+        <p>
+          <strong>Computed Bitcoin 'Brain Wallet'</strong>
+        </p>
 
         <dl class="dl-horizontal">
           <dt>private key</dt>
-          <dd><span id="bitcoinPrivateKey"></span></dd>
+          <dd>
+            <span id="bitcoinPrivateKey"></span>
+          </dd>
           <dt>private key (<a href="https://en.bitcoin.it/wiki/Wallet_import_format" target="_blank">WIF</a>)</dt>
-          <dd><span id="bitcoinPrivateKeyWIF"></span></dd>
+          <dd>
+            <span id="bitcoinPrivateKeyWIF"></span>
+          </dd>
           <dt>public key</dt>
-          <dd><span id="bitcoinPublicKey"></span></dd>
+          <dd>
+            <span id="bitcoinPublicKey"></span>
+          </dd>
           <dt>address</dt>
-          <dd><span id="bitcoinAddress"></span></dd>
+          <dd>
+            <span id="bitcoinAddress"></span>
+          </dd>
           <dt>address QR code</dt>
           <dd>
             <br />
@@ -111,75 +162,130 @@
 
       <br />
 
-      <h2 class="text-muted">Frequently Asked Questions</h2>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">What does it do?</h3>
-        </div>
-        <div class="panel-body">
-          <p>This application generates strong passwords by combining a strong passphrase, a username or application name, a version number, a DNS hostname plus optional extra 'salt' from a hardware token like the <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>. Hardware token salt adds a form of second factor (something you have) to the passphrase (something you know). Your passphrase, and the optional salt, must be kept private and never used elsewhere. The username/application name and URI are assumed public. A cryptographic key derivation function (scrypt) is used to derive the password from the attributes you provide. The same attributes will always result in the same password. It is not possible to reverse the process and find your passphrase or salt from a stolen site password.</p>
-        </div>
-      </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="faq1">
+            <h4 class="panel-title">
+              <a role="button" data-toggle="collapse" data-parent="#accordion" href="#ans1" aria-expanded="true" aria-controls="ans1">
+                What does it do?
+              </a>
+            </h4>
+          </div>
+          <div id="ans1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="faq1">
+            <div class="panel-body">
+              <p>This application generates strong passwords by combining a verifiably high-entropy
+                secret passphrase, an optional secret salt from a hardware token like the
+                <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>, and other
+                context sensitive attributes which are assumed to be public knowlege such
+                as a username or website URL.</p>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">What do you mean by 'deterministic'?</h3>
-        </div>
-        <div class="panel-body">
-          <blockquote>
-            <p>In computer science, a deterministic algorithm is an algorithm which, given a particular input, will always produce the same output, with the underlying machine always passing through the same sequence of states. Deterministic algorithms are by far the most studied and familiar kind of algorithm, as well as one of the most practical, since they can be run on real machines efficiently.</p>
-            <p>Formally, a deterministic algorithm computes a mathematical function; a function has a unique value for any input in its domain, and the algorithm is a process that produces this particular value as output.</p>
-            <footer>Deterministic algorithm <cite title="Wikipedia"><a href="https://en.wikipedia.org/wiki/Deterministic_algorithm" target="_blank">Wikipedia</a></cite></footer>
-          </blockquote>
-        </div>
-      </div>
+                <p>These inputs are then combined and processed through a
+                series of cryptographic key derivation functions which will always
+                generate the same output for any given inputs. It is considered by experts to
+                be impossible to reverse the process and discover your passphrase from anything
+                this tool generates. These properties are what makes this tool
+                so useful. You only need to remember a single strong passphrase in
+                order to generate all of your passwords at anytime, from anywhere.</p>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">What do you mean by 'cryptographically strong'?</h3>
-        </div>
-        <div class="panel-body">
-          <blockquote>
-            <p>In computer science, a deterministic algorithm is an algorithm which, given a particular input, will always produce the same output, with the underlying machine always passing through the same sequence of states. Deterministic algorithms are by far the most studied and familiar kind of algorithm, as well as one of the most practical, since they can be run on real machines efficiently.</p>
-            <p>Formally, a deterministic algorithm computes a mathematical function; a function has a unique value for any input in its domain, and the algorithm is a process that produces this particular value as output.</p>
-            <footer>Deterministic algorithm <cite title="Wikipedia"><a href="https://en.wikipedia.org/wiki/Deterministic_algorithm" target="_blank">Wikipedia</a></cite></footer>
-          </blockquote>
-        </div>
-      </div>
+                <p>The use of an optional hardware token that generates a very strong
+                static password adds a form of second factor security (something you
+                have) to the passphrase (something you know).</p>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Is it safe?</h3>
+                <p>The most important thing to remember to help ensure you use this tool
+                securely is that your strong passphrase, and the optional token password,
+                must be kept absolutely private and never used for any other purpose.</p>
+            </div>
+          </div>
         </div>
-        <div class="panel-body">
-          <p>I created this tool for my own use. I use it. You can trust it to do what it says. It will generate strong passwords locally in your browser and will never communicate anything that you enter, or the passwords it generates, out to the Internet. You are free to browse the <a href="https://github.com/grempe/strongpass" target="_blank">source code</a>, and you can easily run a local copy by just opening the <code>index.html</code> file in your browser. In this case you can run this site completely offline, with your network disconnected. There are no cookies, no analytics tracking scripts, and it runs only over a TLS (HTTPS) connection.</p>
-          <p>All that being said, I am not a cryptographer, and this code has not been reviewed in any serious way by cryptographers. I believe it is strong based on the fact that I am using published crypto primatives consistent with their recommended usage based on my own research. There is no cryptographic invention claimed. Read the source code and decide for yourself if its safe for you.</p>
-        </div>
-      </div>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">What is the algorithm used to generate passwords?</h3>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="faq2">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#ans2" aria-expanded="false" aria-controls="ans2">
+                 What do you mean by 'deterministic'?
+               </a>
+            </h4>
+          </div>
+          <div id="ans2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="faq2">
+            <div class="panel-body">
+              <blockquote>
+                <p>In computer science, a deterministic algorithm is an algorithm which, given a particular input, will always produce the same output, with the underlying machine always passing through the same sequence of states. Deterministic algorithms
+                  are by far the most studied and familiar kind of algorithm, as well as one of the most practical, since they can be run on real machines efficiently.</p>
+                <p>Formally, a deterministic algorithm computes a mathematical function; a function has a unique value for any input in its domain, and the algorithm is a process that produces this particular value as output.</p>
+                <footer>Deterministic algorithm
+                  <cite title="Wikipedia"><a href="https://en.wikipedia.org/wiki/Deterministic_algorithm" target="_blank">Wikipedia</a></cite>
+                </footer>
+              </blockquote>
+            </div>
+          </div>
         </div>
-        <div class="panel-body">
-          <p>Here is a pseudocode version of the algorithm. Leading and trailing whitespace is stripped from all input fields. You can view the full source code <a href="https://github.com/grempe/strongpass/blob/master/js/main.js" target="_blank">here</a>.</p>
 
-          <pre class="pre-scrollable">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="faq3">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#ans3" aria-expanded="false" aria-controls="ans3">
+                  What do you mean by 'cryptographically strong'?
+                </a>
+            </h4>
+          </div>
+          <div id="ans3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="faq3">
+            <div class="panel-body">
+              In this context, I believe this tool to be strong due to the use of well tested and understood one-way cryptographic primitives such as <code>HMAC-SHA-512</code>, <code>SHA-512</code>, and <code>scrypt</code>. The real source of strength though is always in the quality of the passphrase used to derive everything else. This application uses the <code>zxcvbn</code> entropy estimation tool to ensure that only high entropy passphrases can be used as the seed for everything that is generated. Along with a strong passphrase this application is heavily reliant on the strength of the output of the various hashing algorithms to being reversed. In other words it is considered infeasible to discover the original passphrase from any of the outputs generated. The use of <code>scrypt</code> in particular, which is a 'memory-hard' function, dramatically reduces an attackers ability to re-discover the original passphrase even with custom hardware based attacks. The generated passwords, and bitcoin wallets, all make use of only a portion of the extremely large derived key material available to them and they don't share any of that material. You can learn more by reviewing the algorithm pseudocode in a later FAQ entry, or by examining the full <a href="https://github.com/grempe/strongpass" target="_blank">source code</a>.
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="faq4">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#ans4" aria-expanded="false" aria-controls="ans4">
+                   Is it safe?
+                 </a>
+            </h4>
+          </div>
+          <div id="ans4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="faq4">
+            <div class="panel-body">
+              <p>I created this tool for my own use. I use it. You can trust it to do what it says. It will generate strong passwords locally in your browser and will never communicate anything that you enter, or the passwords it generates, out to the Internet.
+                You are free to browse the <a href="https://github.com/grempe/strongpass" target="_blank">source code</a>, and you can easily run a local copy by just opening the
+                <code>index.html</code> file in your browser. In this case you can run this site completely offline, with your network disconnected. There are no cookies, no analytics tracking scripts, and it runs only over a TLS (HTTPS) connection.</p>
+              <p>All that being said, I am not a cryptographer, and this code has not been reviewed in any serious way by cryptographers. I believe it is strong based on the fact that I am using published crypto primatives consistent with their recommended
+                usage based on my own research. There is no cryptographic invention claimed. Read the source code and decide for yourself if its safe for you.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="faq5">
+            <h4 class="panel-title">
+              <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#ans5" aria-expanded="false" aria-controls="ans5">
+                    What is the algorithm used to generate passwords?
+                  </a>
+            </h4>
+          </div>
+          <div id="ans5" class="panel-collapse collapse" role="tabpanel" aria-labelledby="faq5">
+            <div class="panel-body">
+              <p>Here is a pseudocode version of the algorithm. Leading and trailing whitespace is stripped from all input fields before processing. Some fields are normalized to a downcased version. You can view the full source code <a href="https://github.com/grempe/strongpass/blob/master/js/main.js" target="_blank">here</a>.</p>
+
+              <pre class="pre-scrollable">
 masterKey         = hmacSha512(passphrase, sha512(downcase(usernameOrAppname)))
 salt              = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)
 derivedKey        = scrypt(masterKey, salt, 16384, 8, 1, 64 Bytes Output)
-derivedKeyFirst32 = derivedKey[0, 32]
-derivedKeyLast32  = derivedKey[32, 64]
+derivedKeyFirst32 = derivedKey[0,32]
+derivedKeyLast32  = derivedKey[32,64]
 symbol            = lookupSymbol(derivedKeyFirst32[31] % 10)
 number            = lookupNumber(derivedKeyFirst32[30] % 10)
 password          = first18Chars(base64encode(derivedKeyFirst32)) + symbol + number
 bitcoinKeypair    = generateKeypairFromKey(hex(derivedKeyLast32))
-          </pre>
+              </pre>
+            </div>
+          </div>
         </div>
+
       </div>
 
-    </div><!-- /.container -->
+    </div>
+    <!-- /.container -->
 
     <!-- load third party libraries -->
     <script src="js/bower_components/jquery/dist/jquery.min.js"></script>
