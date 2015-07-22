@@ -20,7 +20,7 @@ function hasValidArgsForMode(args) {
         return true;
     } else if (args.mode === "app" && args.passphrase.length > 0 && args.appName.length > 0 && args.version > 0) {
         return true;
-    } else if (args.mode === "btc" && args.passphrase.length > 0) {
+    } else if (args.mode === "btc" && args.passphrase.length > 0 && args.walletName.length > 0) {
         return true;
     } else {
         return false;
@@ -37,6 +37,10 @@ function processPassphrase(args) {
 
     if (args.appName !== "") {
         usernameOrAppname = args.appName;
+    }
+
+    if (args.walletName !== "") {
+        usernameOrAppname = args.walletName;
     }
 
   // Estimate base password entropy with ZXCVBN
@@ -166,6 +170,7 @@ function clearInputs() {
     $("#webUsernameInput").val("");
     $("#webDomainInput").val("");
     $("#appNameInput").val("");
+    $("#walletNameInput").val("");
     $("#versionInput").val(1);
 }
 
@@ -175,6 +180,7 @@ function setWebMode() {
     $("#webUsernameInputGroup").slideDown();
     $("#webDomainInputGroup").slideDown();
     $("#appNameInputGroup").slideUp();
+    $("#walletNameInputGroup").slideUp();
     $("#versionInputGroup").slideDown();
 }
 
@@ -184,6 +190,7 @@ function setAppMode() {
     $("#webUsernameInputGroup").slideUp();
     $("#webDomainInputGroup").slideUp();
     $("#appNameInputGroup").slideDown();
+    $("#walletNameInputGroup").slideUp();
     $("#versionInputGroup").slideDown();
 }
 
@@ -193,6 +200,7 @@ function setBtcMode() {
     $("#webUsernameInputGroup").slideUp();
     $("#webDomainInputGroup").slideUp();
     $("#appNameInputGroup").slideUp();
+    $("#walletNameInputGroup").slideDown();
     $("#versionInputGroup").slideUp();
 }
 
@@ -234,6 +242,7 @@ function updateOutputContainers() {
         var webUsername = $.trim($('#webUsernameInput').val()).toLowerCase();
         var webDomain = $.trim($('#webDomainInput').val()).toLowerCase();
         var appName = $.trim($('#appNameInput').val()).toLowerCase();
+        var walletName = $.trim($('#walletNameInput').val()).toLowerCase();
         var version = parseInt($.trim($('#versionInput').val()));
 
         var mode;
@@ -245,7 +254,7 @@ function updateOutputContainers() {
             mode = "btc";
         }
 
-        var processPassphraseArgs = {mode: mode, passphrase: passphrase, salt: salt, webUsername: webUsername, webDomain: webDomain, appName: appName, version: version};
+        var processPassphraseArgs = {mode: mode, passphrase: passphrase, salt: salt, webUsername: webUsername, webDomain: webDomain, appName: appName, walletName: walletName, version: version};
         var securityObj = processPassphrase(processPassphraseArgs);
 
         if (isWebMode()) {
@@ -336,7 +345,7 @@ $(document).ready(function () {
         common: {
             zxcvbn: true,
             zxcvbnTerms: ['secret', 'password'],
-            userInputs: ['#webUsernameInput', '#webDomainInput', '#appNameInput', '#tokenInput']
+            userInputs: ['#webUsernameInput', '#webDomainInput', '#appNameInput', '#walletNameInput', '#tokenInput']
         }
     });
 
