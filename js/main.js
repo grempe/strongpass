@@ -258,7 +258,7 @@ function updateOutputContainers() {
             updatePasswordOutputContainer({});
             updateBitcoinOutputContainer(securityObj);
         }
-    }, 400 );
+    }, 500 );
 }
 
 function updatePasswordOutputContainer(securityObj) {
@@ -308,11 +308,11 @@ $(document).ready(function () {
 
     // a click on any mode selector button
     $(".modeSelector").click(function() {
+        $(".modeSelector").removeClass("active");
+        $(this).addClass("active");
         $("#inputForm").slideDown();
         clearInputs();
         updateOutputContainers();
-        $(".modeSelector").removeClass("active");
-        $(this).addClass("active");
     });
 
     $("#webModeButton").click(function() {
