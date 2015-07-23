@@ -175,7 +175,9 @@ function clearInputs() {
 }
 
 function setWebMode() {
-    $("#keyPassphraseInputGroup").slideDown();
+    $("#keyPassphraseInputGroup").slideDown(function(){
+        $("#keyPassphraseInput").focus();
+    });
     $("#tokenInputGroup").slideDown();
     $("#webUsernameInputGroup").slideDown();
     $("#webDomainInputGroup").slideDown();
@@ -185,7 +187,9 @@ function setWebMode() {
 }
 
 function setAppMode() {
-    $("#keyPassphraseInputGroup").slideDown();
+    $("#keyPassphraseInputGroup").slideDown(function(){
+        $("#keyPassphraseInput").focus();
+    });
     $("#tokenInputGroup").slideDown();
     $("#webUsernameInputGroup").slideUp();
     $("#webDomainInputGroup").slideUp();
@@ -195,7 +199,9 @@ function setAppMode() {
 }
 
 function setBtcMode() {
-    $("#keyPassphraseInputGroup").slideDown();
+    $("#keyPassphraseInputGroup").slideDown(function(){
+        $("#keyPassphraseInput").focus();
+    });
     $("#tokenInputGroup").slideDown();
     $("#webUsernameInputGroup").slideUp();
     $("#webDomainInputGroup").slideUp();
