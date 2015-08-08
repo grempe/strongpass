@@ -69,9 +69,32 @@ function processPassphrase(args) {
       var masterKeyUint8 = nacl.auth.full(passPhraseHashedUint8, usernameOrAppnameHashedUint8);  // HMAC-SHA-512, 64 Bytes
 
       // Construct a salt for key derivation and pass it through SHA-512
-      var paramsCombined = usernameOrAppname + '@' + host + ':v' + args.version + ':' + args.salt; // String
-      var paramsCombinedUint8 = nacl.util.decodeUTF8(paramsCombined);                         // Byte Array
-      var kdSaltUint8 = nacl.hash(paramsCombinedUint8);                                       // SHA-512, 64 Bytes
+      // Params should be delimited and length of segments included per Dmitry Chestnykh to avoid:
+      //
+      // username: ssl,
+      // host: docs.google.com
+      //
+      // from equaling:
+      //
+      // username: ssl.docs
+      // host: .google.com
+      //
+      var paramsCombined = usernameOrAppname.length + '.' + usernameOrAppname;
+
+      if (host && host.length > 0) {
+          paramsCombined = paramsCombined + '@' + host.length + '.' + host;
+      }
+
+      if (args.version && args.version > 0) {
+          paramsCombined = paramsCombined + ':' + args.version.length + '.' + args.version;
+      }
+
+      if (args.salt && args.salt.length > 0) {
+          paramsCombined = paramsCombined + ':' + args.salt.length + '.' + args.salt;
+      }
+
+      var paramsCombinedUint8 = nacl.util.decodeUTF8(paramsCombined); // Byte Array
+      var kdSaltUint8 = nacl.hash(paramsCombinedUint8);               // SHA-512, 64 Bytes
 
       // scrypt : https://www.tarsnap.com/scrypt.html
       //

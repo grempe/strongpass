@@ -284,7 +284,7 @@
 
               <pre class="pre-scrollable">
 masterKey         = hmacSha512(sha512(passphrase), sha512(downcase(usernameOrAppname)))
-salt              = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)
+salt              = sha512(len(usernameOrAppname) + '.' + downcase(usernameOrAppname) + '@' + len(hostname) + '.' + downcase(hostname) + ':' + len(version) + '.' + version + ':' + len(tokenSalt) + '.' + tokenSalt)
 derivedKey        = scrypt(masterKey, salt, 16384, 8, 1, 64 Bytes Output)
 derivedKeyFirst32 = derivedKey[0,32]
 derivedKeyLast32  = derivedKey[32,64]
