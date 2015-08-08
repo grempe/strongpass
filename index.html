@@ -283,7 +283,7 @@
               <p>Here is a pseudocode version of the algorithm. Leading and trailing whitespace is stripped from all input fields before processing. Some fields are normalized to a downcased version. You can view the full source code <a href="https://github.com/grempe/strongpass/blob/master/js/main.js" target="_blank">here</a>.</p>
 
               <pre class="pre-scrollable">
-masterKey         = hmacSha512(passphrase, sha512(downcase(usernameOrAppname)))
+masterKey         = hmacSha512(sha512(passphrase), sha512(downcase(usernameOrAppname)))
 salt              = sha512(downcase(usernameOrAppname) + downcase(hostname) + version + tokenSalt)
 derivedKey        = scrypt(masterKey, salt, 16384, 8, 1, 64 Bytes Output)
 derivedKeyFirst32 = derivedKey[0,32]

@@ -29,19 +29,21 @@ function hasValidArgsForMode(args) {
 }
 function processPassphrase(args) {
 
-    var usernameOrAppname = "";
+  var usernameOrAppname = "";
 
-    if (args.webUsername !== "") {
-        usernameOrAppname = args.webUsername;
-    }
+  if (args.webUsername !== "") {
+    usernameOrAppname = args.webUsername;
+  }
 
-    if (args.appName !== "") {
-        usernameOrAppname = args.appName;
-    }
+  if (args.appName !== "") {
+    usernameOrAppname = args.appName;
+  }
 
-    if (args.walletName !== "") {
-        usernameOrAppname = args.walletName;
-    }
+  if (args.walletName !== "") {
+    usernameOrAppname = args.walletName;
+  }
+
+  usernameOrAppname.toLowerCase();
 
   // Estimate base password entropy with ZXCVBN
   // https://blogs.dropbox.com/tech/2012/04/zxcvbn-realistic-password-strength-estimation/
@@ -53,10 +55,18 @@ function processPassphrase(args) {
   if (zxcvbnPassphrase.score >= 4  && hasValidArgsForMode(args)) {
 
       // Generate a master key w/ HMAC-SHA-256, from passphrase and username
-      var passPhraseUint8 = nacl.util.decodeUTF8(args.passphrase);                         // Byte Array
-      var usernameOrAppnameUint8 = nacl.util.decodeUTF8(usernameOrAppname);                // Byte Array
-      var usernameOrAppnameHashedUint8 = nacl.hash(usernameOrAppnameUint8);                // SHA-512, 64 Bytes
-      var masterKeyUint8 = nacl.auth.full(passPhraseUint8, usernameOrAppnameHashedUint8);  // HMAC-SHA-512, 64 Bytes
+      // Note : (Dmitry Chestnykh) Not hashing the passphrase in addition to the uname
+      // will make masterKey from a passphrase longer than 128-bytes equal to
+      // masterKey from the SHA512 of passphrase due to an HMAC quirk where it
+      // compresses keys longer than the hash block.
+      //
+      // See https://twitter.com/dchest/status/421595430539894784 for example (for SHA1).
+      //
+      // If you want to avoid this non-important detail, you can, for example, pre-hash the passphrase.
+      var passPhraseHashedUint8 = nacl.hash(nacl.util.decodeUTF8(args.passphrase));              // SHA-512, 64 Bytes
+      var usernameOrAppnameUint8 = nacl.util.decodeUTF8(usernameOrAppname);                      // Byte Array
+      var usernameOrAppnameHashedUint8 = nacl.hash(usernameOrAppnameUint8);                      // SHA-512, 64 Bytes
+      var masterKeyUint8 = nacl.auth.full(passPhraseHashedUint8, usernameOrAppnameHashedUint8);  // HMAC-SHA-512, 64 Bytes
 
       // Construct a salt for key derivation and pass it through SHA-512
       var paramsCombined = usernameOrAppname + '@' + host + ':v' + args.version + ':' + args.salt; // String
