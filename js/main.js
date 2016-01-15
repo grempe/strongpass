@@ -1,32 +1,14 @@
-// Setup Bitcore Bitcoin Library
-var bitcore = require('bitcore');
-var PrivateKey = bitcore.PrivateKey;
-var PublicKey = bitcore.PublicKey;
-var Address = bitcore.Address;
-var Networks = bitcore.Networks;
-
-// takes a 'key' in Hex format
-function generateBitcoinKeyDataFromKey(key) {
-    var privateKey = new PrivateKey(key);
-    var privateKeyWIF = privateKey.toWIF();
-    var publicKey = privateKey.toPublicKey();
-    var address = publicKey.toAddress(Networks.livenet);
-
-    return {privateKey: privateKey, privateKeyWIF: privateKeyWIF, publicKey: publicKey, address: address};
-}
-
 function hasValidArgsForMode(args) {
     if (args.mode === "web" && args.passphrase.length > 0 && args.webUsername.length > 0 && args.webDomain.length > 0 && args.version > 0) {
         return true;
     } else if (args.mode === "app" && args.passphrase.length > 0 && args.appName.length > 0 && args.version > 0) {
-        return true;
-    } else if (args.mode === "btc" && args.passphrase.length > 0 && args.walletName.length > 0) {
         return true;
     } else {
         return false;
     }
 
 }
+
 function processPassphrase(args) {
 
   var usernameOrAppname = "";
@@ -37,10 +19,6 @@ function processPassphrase(args) {
 
   if (args.appName !== "") {
     usernameOrAppname = args.appName;
-  }
-
-  if (args.walletName !== "") {
-    usernameOrAppname = args.walletName;
   }
 
   usernameOrAppname.toLowerCase();
@@ -119,13 +97,10 @@ function processPassphrase(args) {
       var N = 16384; // 2^14 : 128×16384×8 = 16,777,216 bytes = 16 MB RAM, 16384 iterations.
       var r = 8;     //
       var p = 1;     //
-      var L = 64;    // Output Bytes
+      var L = 32;    // Output Bytes
       var kdBytesUint8 = scrypt.crypto_scrypt(masterKeyUint8, kdSaltUint8, N, r, p, L);
 
-      // split the key derived bytes. Use half of the 64 Bytes for password
-      // generation, and the other half for Bitcoin keypair.
       kdBytesUint8ForPass = kdBytesUint8.subarray(0,32);
-      kdBytesUint8ForBTC = kdBytesUint8.subarray(32, 64);
 
       // calculate a symbol from last byte to ensure every generated password
       // has at least one symbol since the Base64 output doesn't guarantee.
@@ -144,23 +119,17 @@ function processPassphrase(args) {
       // Convert the key derivation function output to Base 64 (does not include
       // extra number or symbol yet)
       var kdBytesBase64ForPass = nacl.util.encodeBase64(kdBytesUint8ForPass); // Base 64 String for password
-      var kdBytesHexForBTC = scrypt.to_hex(kdBytesUint8ForBTC);              // Hex String for Bitcoin Keypair
 
       // Take only the first N bytes of the Base 64 encoded password as the final password.
       // Append a deterministically chosen symbol and number to ensure meeting most password requirements
       var password = kdBytesBase64ForPass.substring(0, 18) + chosenSymbol + chosenNumber; // Partial Base 64 String
-
-      var bitcoinKeyData = {};
-      if (isBtcMode()) {
-          bitcoinKeyData = generateBitcoinKeyDataFromKey(kdBytesHexForBTC);
-      }
 
       // Calc the estimated entropy of the final encoded password.
       var zxcvbnPassword = zxcvbn(password);
 
       return {usernameOrAppname: usernameOrAppname, host: host, password: password,
               version: args.version, salt: args.salt, passphraseEntropy: zxcvbnPassphrase.entropy,
-              passwordEntropy: zxcvbnPassword.entropy, bitcoinKeyData: bitcoinKeyData};
+              passwordEntropy: zxcvbnPassword.entropy};
   } else {
       return null;
   }
@@ -231,18 +200,6 @@ function setAppMode() {
     $("#versionInputGroup").slideDown();
 }
 
-function setBtcMode() {
-    $("#keyPassphraseInputGroup").slideDown(function(){
-        $("#keyPassphraseInput").focus();
-    });
-    $("#tokenInputGroup").slideDown();
-    $("#webUsernameInputGroup").slideUp();
-    $("#webDomainInputGroup").slideUp();
-    $("#appNameInputGroup").slideUp();
-    $("#walletNameInputGroup").slideDown();
-    $("#versionInputGroup").slideUp();
-}
-
 function isWebMode() {
     if ($("#webModeButton").hasClass("active")) {
         return true;
@@ -251,12 +208,6 @@ function isWebMode() {
 
 function isAppMode() {
     if ($("#appModeButton").hasClass("active")) {
-        return true;
-    }
-}
-
-function isBtcMode() {
-    if ($("#btcModeButton").hasClass("active")) {
         return true;
     }
 }
@@ -289,22 +240,15 @@ function updateOutputContainers() {
             mode = "web";
         } else if (isAppMode()) {
             mode = "app";
-        } else if (isBtcMode()) {
-            mode = "btc";
         }
 
-        var processPassphraseArgs = {mode: mode, passphrase: passphrase, salt: salt, webUsername: webUsername, webDomain: webDomain, appName: appName, walletName: walletName, version: version};
+        var processPassphraseArgs = {mode: mode, passphrase: passphrase, salt: salt, webUsername: webUsername, webDomain: webDomain, appName: appName, version: version};
         var securityObj = processPassphrase(processPassphraseArgs);
 
         if (isWebMode()) {
             updatePasswordOutputContainer(securityObj);
-            updateBitcoinOutputContainer({});
         } else if (isAppMode()) {
             updatePasswordOutputContainer(securityObj);
-            updateBitcoinOutputContainer({});
-        } else if (isBtcMode()) {
-            updatePasswordOutputContainer({});
-            updateBitcoinOutputContainer(securityObj);
         }
     }, 500 );
 }
@@ -320,30 +264,6 @@ function updatePasswordOutputContainer(securityObj) {
         $("#passwordEntropy").text(securityObj.passwordEntropy);
         // $("#sanitizedSaltInWords").text(computeSaltInWords(securityObj.usernameOrAppname, securityObj.host, securityObj.version, securityObj.salt));
         $("#passwordOutputContainer").slideDown();
-    } else { // btc mode
-        $("#passwordOutput").text('');
-        $("#sanitizedSaltInWords").text('');
-        $("#passwordOutputContainer").slideUp();
-    }
-}
-
-function updateBitcoinOutputContainer(securityObj) {
-    if (isBtcMode() && securityObj && securityObj.bitcoinKeyData) {
-        $("#bitcoinPrivateKey").text(securityObj.bitcoinKeyData.privateKey);
-        $("#bitcoinPrivateKeyWIF").text(securityObj.bitcoinKeyData.privateKeyWIF);
-        $("#bitcoinPublicKey").text(securityObj.bitcoinKeyData.publicKey);
-        $("#bitcoinAddress").text(securityObj.bitcoinKeyData.address);
-        $('#qrcode').empty().qrcode({width: 148,height: 148, typeNumber: 5, text: "bitcoin:" + securityObj.bitcoinKeyData.address});
-        $("#qrcodeAddress").text("bitcoin:" + securityObj.bitcoinKeyData.address);
-        $("#bitcoinOutputContainer").slideDown();
-    } else {
-        $("#bitcoinPrivateKey").empty();
-        $("#bitcoinPrivateKeyWIF").empty();
-        $("#bitcoinPublicKey").empty();
-        $("#bitcoinAddress").empty();
-        $('#qrcode').empty();
-        $("#qrcodeAddress").empty();
-        $("#bitcoinOutputContainer").slideUp();
     }
 }
 
@@ -352,7 +272,6 @@ $(document).ready(function () {
 
     $("#inputForm").hide();
     $("#passwordOutputContainer").hide();
-    $("#bitcoinOutputContainer").hide();
 
     // a click on any mode selector button
     $(".modeSelector").click(function() {
@@ -371,10 +290,6 @@ $(document).ready(function () {
         setAppMode();
     });
 
-    $("#btcModeButton").click(function() {
-        setBtcMode();
-    });
-
     // Configure the password strength meter.
     // https://github.com/ablanco/jquery.pwstrength.bootstrap
     $('#keyPassphraseInput').pwstrength({
@@ -384,7 +299,7 @@ $(document).ready(function () {
         common: {
             zxcvbn: true,
             zxcvbnTerms: ['secret', 'password'],
-            userInputs: ['#webUsernameInput', '#webDomainInput', '#appNameInput', '#walletNameInput', '#tokenInput']
+            userInputs: ['#webUsernameInput', '#webDomainInput', '#appNameInput', '#tokenInput']
         }
     });
 

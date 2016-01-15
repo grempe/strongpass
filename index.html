@@ -26,10 +26,10 @@
 
       <div class="page-header">
         <h1 id="listTitleHeader">Strong Pass&nbsp;
-          <small>a deterministic, cryptographically strong, password and bitcoin wallet generator</small>
+          <small>a deterministic, cryptographically strong, password generator</small>
         </h1>
         <p class="lead">
-          We all need passwords that are strong and easy to remember. If you can remember one strong passphrase you can generate a password for any number of websites, local applications, or even Bitcoin wallets. The same passphrase and options will always result
+          We all need passwords that are strong and easy to remember. If you can remember one strong passphrase you can generate a password for any number of websites, or local applications. The same passphrase and options will always result
           in the same output being generated. You can be assured that all cryptographic operations are done in your browser and no information is sent elsewhere or shared with anyone. You don't have to trust this assertion blindly, you can examine and run the source code locally to verify the safety of its use.
         </p>
       </div>
@@ -39,7 +39,6 @@
           <div class="btn-group" role="group" aria-label="Mode Selector">
             <button type="button" id="webModeButton" class="modeSelector btn btn-default">Web password</button>
             <button type="button" id="appModeButton" class="modeSelector btn btn-default">Application password</button>
-            <button type="button" id="btcModeButton" class="modeSelector btn btn-default">Bitcoin wallet</button>
           </div>
         </div>
       </div>
@@ -136,38 +135,6 @@
         </p>
       </div>
 
-      <div id="bitcoinOutputContainer" class="well">
-        <p>
-          <strong>Computed Bitcoin 'Brain Wallet'</strong>
-        </p>
-
-        <dl class="dl-horizontal">
-          <dt><span class="text-danger">private key</span></dt>
-          <dd>
-            <span id="bitcoinPrivateKey" class="text-danger"></span>
-          </dd>
-          <dt><span class="text-danger">private key</span> (<a href="https://en.bitcoin.it/wiki/Wallet_import_format" target="_blank">WIF</a>)</dt>
-          <dd>
-            <span id="bitcoinPrivateKeyWIF" class="text-danger"></span>
-          </dd>
-          <dt><span class="text-success">public key</span></dt>
-          <dd>
-            <span id="bitcoinPublicKey" class="text-success"></span>
-          </dd>
-          <dt><span class="text-success">address</span></dt>
-          <dd>
-            <span id="bitcoinAddress" class="text-success"></span>
-          </dd>
-          <br />
-          <dt><span class="text-success">address QR code</span></dt>
-          <dd>
-            <div id="qrcode"></div>
-            <small id="qrcodeAddress" class="text-muted"></small>
-          </dd>
-        </dl>
-
-      </div>
-
       <hr />
 
       <br />
@@ -187,7 +154,7 @@
             <div class="panel-body">
               <p>This application generates strong passwords by combining a verifiably high-entropy
                 secret passphrase, an optional secret salt from a hardware token like the
-                <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey Neo</a>, and other
+                <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey</a>, and other
                 context sensitive attributes which are assumed to be public knowlege such
                 as a username or website URL.</p>
 
@@ -199,8 +166,8 @@
                 so useful. You only need to remember a single strong passphrase in
                 order to generate all of your passwords at anytime, from anywhere.</p>
 
-                <p>The use of an optional hardware token that generates a very strong
-                static password adds a form of second factor security (something you
+                <p>The use of an optional hardware token that stores a very strong
+                static password adds a weak form of second factor security (something you
                 have) to the passphrase (something you know).</p>
 
                 <p>The most important thing to remember to help ensure you use this tool
@@ -244,7 +211,7 @@
           </div>
           <div id="ans3" class="panel-collapse collapse" role="tabpanel" aria-labelledby="faq3">
             <div class="panel-body">
-              In this context, I believe this tool to be strong due to the use of well tested and understood one-way cryptographic primitives such as <code>HMAC-SHA-512</code>, <code>SHA-512</code>, and <code>scrypt</code>. The real source of strength though is always in the quality of the passphrase used to derive everything else. This application uses the <code>zxcvbn</code> entropy estimation tool to ensure that only high entropy passphrases can be used as the seed for everything that is generated. Along with a strong passphrase this application is heavily reliant on the strength of the output of the various hashing algorithms to being reversed. In other words it is considered infeasible to discover the original passphrase from any of the outputs generated. The use of <code>scrypt</code> in particular, which is a 'memory-hard' function, dramatically reduces an attackers ability to re-discover the original passphrase even with custom hardware based attacks. The generated passwords, and bitcoin wallets, all make use of only a portion of the extremely large derived key material available to them and they don't share any of that material. You can learn more by reviewing the algorithm pseudocode in a later FAQ entry, or by examining the full <a href="https://github.com/grempe/strongpass" target="_blank">source code</a>.
+              In this context, I believe this tool to be strong due to the use of well tested and understood one-way cryptographic primitives such as <code>HMAC-SHA-512</code>, <code>SHA-512</code>, and <code>scrypt</code>. The real source of strength though is always in the quality of the passphrase used to derive everything else. This application uses the <code>zxcvbn</code> entropy estimation tool to ensure that only high entropy passphrases can be used as the seed for everything that is generated. Along with a strong passphrase this application is heavily reliant on the strength of the output of the various hashing algorithms to being reversed. In other words it is considered infeasible to discover the original passphrase from any of the outputs generated. The use of <code>scrypt</code> in particular, which is a 'memory-hard' function, dramatically reduces an attackers ability to re-discover the original passphrase even with custom hardware based attacks. The generated passwords all make use of only a portion of the extremely large derived key material available to them and they don't share any of that material. You can learn more by reviewing the algorithm pseudocode in a later FAQ entry, or by examining the full <a href="https://github.com/grempe/strongpass" target="_blank">source code</a>.
             </div>
           </div>
         </div>
@@ -285,13 +252,10 @@
               <pre class="pre-scrollable">
 masterKey         = hmacSha512(sha512(passphrase), sha512(downcase(usernameOrAppname)))
 salt              = sha512(len(usernameOrAppname) + '.' + downcase(usernameOrAppname) + '@' + len(hostname) + '.' + downcase(hostname) + ':' + len(version) + '.' + version + ':' + len(tokenSalt) + '.' + tokenSalt)
-derivedKey        = scrypt(masterKey, salt, 16384, 8, 1, 64 Bytes Output)
-derivedKeyFirst32 = derivedKey[0,32]
-derivedKeyLast32  = derivedKey[32,64]
-symbol            = lookupSymbol(derivedKeyFirst32[31] % 10)
-number            = lookupNumber(derivedKeyFirst32[30] % 10)
-password          = first18Chars(base64encode(derivedKeyFirst32)) + symbol + number
-bitcoinKeypair    = generateKeypairFromKey(hex(derivedKeyLast32))
+derivedKey        = scrypt(masterKey, salt, 16384, 8, 1, 32 Bytes Output)
+symbol            = lookupSymbol(derivedKey[31] % 10)
+number            = lookupNumber(derivedKey[30] % 10)
+password          = first18Chars(base64encode(derivedKey)) + symbol + number
               </pre>
             </div>
           </div>
@@ -312,8 +276,6 @@ bitcoinKeypair    = generateKeypairFromKey(hex(derivedKeyLast32))
     <script src="js/bower_components/tweetnacl/nacl-fast.min.js"></script>
     <script src="js/bower_components/tweetnacl-auth/nacl-auth.min.js"></script>
     <script src="js/bower_components/js-scrypt/browser/scrypt.js"></script>
-    <script src="js/bower_components/bitcore/bitcore.min.js"></script>
-    <script src="js/bower_components/jquery-qrcode/jquery.qrcode.min.js"></script>
 
     <!-- core application JS -->
     <script src="js/main.js"></script>
