@@ -176,7 +176,6 @@ function clearInputs() {
   $('#webUsernameInput').val('');
   $('#webDomainInput').val('');
   $('#appNameInput').val('');
-  $('#walletNameInput').val('');
   $('#versionInput').val(1);
 }
 
@@ -189,7 +188,6 @@ function setWebMode() {
   $('#webUsernameInputGroup').slideDown();
   $('#webDomainInputGroup').slideDown();
   $('#appNameInputGroup').slideUp();
-  $('#walletNameInputGroup').slideUp();
   $('#versionInputGroup').slideDown();
 }
 
@@ -202,7 +200,6 @@ function setAppMode() {
   $('#webUsernameInputGroup').slideUp();
   $('#webDomainInputGroup').slideUp();
   $('#appNameInputGroup').slideDown();
-  $('#walletNameInputGroup').slideUp();
   $('#versionInputGroup').slideDown();
 }
 
@@ -238,7 +235,6 @@ function updateOutputContainers() {
     var webUsername = $.trim($('#webUsernameInput').val()).toLowerCase();
     var webDomain = $.trim($('#webDomainInput').val()).toLowerCase();
     var appName = $.trim($('#appNameInput').val()).toLowerCase();
-    var walletName = $.trim($('#walletNameInput').val()).toLowerCase();
     var version = parseInt($.trim($('#versionInput').val()));
 
     var mode;
