@@ -163,6 +163,26 @@ Let's see the options of each section.
   Sets if it supports legacy Bootstrap 2 (true) or the current Bootstrap 3
   (false), the progress bar html is different.
 
+* __bootstrap4__:
+
+  Default: `false` (Boolean)
+
+  Sets if it supports unstable Bootstrap 4 (true) or the current Bootstrap 3
+  (false), the progress bar html is different. Keep in mind that the current
+  Boostrap 4 support is very basic.
+
+* __colorClasses__:
+
+  Default: `["danger", "warning", "success"]` (Array)
+
+  The css classes applied to the bar in the progress bar and to the verdicts,
+  depending on the strength of the password.
+
+  Keep in mind that for Boostrap 2 a `bar-` prefix will be added, that for
+  Boostrap 3 the prefix will be `progress-bar-`, and that for Bootstrap 4 it
+  will be `progress-`. This is the case for the progress bar, not the verdicts.
+  For the verdicts there is no prefix whatsoever.
+
 * __showProgressBar__:
 
   Default: `true` (Boolean)
@@ -179,6 +199,13 @@ Let's see the options of each section.
 
   If the `showVerdictsInsideProgressBar` option is active, then the verdicts
   won't appear on the popover.
+
+* __popoverPlacement__:
+
+  Default: `"bottom"` (String)
+
+  Choose where the popover should be placed in relation with the input field.
+  The possible options are: `"top"` `"bottom"` `"left"` `"right"` `"auto"`
 
 * __showStatus__:
 
@@ -258,6 +285,8 @@ Let's see the options of each section.
   this setting is active, the verdict viewport is ignored and they won't appear
   on the popover if it is being showed. Also this option overrides the value of
   the _showVerdicts_ one.
+
+  This option is not available when using Bootstrap 4.
 
 * __useVerdictCssClass__:
 

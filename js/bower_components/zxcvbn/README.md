@@ -7,145 +7,270 @@ _/\/\/\/\/\__/\/\__/\/\____/\/\/\/\______/\______/\/\/\/\____/\/\__/\/\_
 ________________________________________________________________________
 ```
 
-`zxcvbn`, named after a crappy password, is a JavaScript password strength
-estimation library. Use it to implement a custom strength bar on a
-signup form near you!
+[![Build Status](https://travis-ci.org/dropbox/zxcvbn.svg?branch=master)](https://travis-ci.org/dropbox/zxcvbn)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/dropbox-zxcvbn.svg)](https://saucelabs.com/u/dropbox-zxcvbn)
 
-`zxcvbn` attempts to give sound password advice through pattern matching
-and conservative entropy calculations. It finds 10k common passwords,
-common American names and surnames, common English words, and common
-patterns like dates, repeats (aaa), sequences (abcd), and QWERTY
-patterns.
+`zxcvbn` is a password strength estimator inspired by password crackers. Through pattern matching and conservative entropy calculations, it recognizes and weighs 30k common passwords, common names and surnames according to US census data, popular English words from Wikipedia and US television and movies, and other common patterns like dates, repeats (`aaa`), sequences (`abcd`), keyboard patterns (`qwertyuiop`), and l33t speak.
 
-For full motivation, see:
+Consider using zxcvbn as an algorithmic alternative to password composition policy — it is more secure, flexible, and usable when sites require a minimal complexity score in place of annoying rules like "passwords must contain three of {lower, upper, numbers, symbols}".
+
+* __More secure__: policies often fail both ways, allowing weak passwords (`P@ssword1`) and disallowing strong passwords.
+* __More flexible__: zxcvbn allows many password styles to flourish so long as it detects sufficient complexity — passphrases are rated highly given enough uncommon words, keyboard patterns are ranked based on length and number of turns, and capitalization adds more complexity when it's unpredictaBle.
+* __More usable__: Use zxcvbn to build simple, rule-free interfaces that give instant feedback. In addition to scoring, zxcvbn includes minimal, targeted verbal feedback that can help guide users towards less guessable passwords.
+
+At Dropbox we use zxcvbn on our [signup page](https://www.dropbox.com/register) and change/reset password flows. zxcvbn is designed for node and the browser, but we use our [python port](https://github.com/dropbox/python-zxcvbn) inside the Dropbox desktop client, [Objective C port](https://github.com/dropbox/zxcvbn-ios) in our iOS app, and Java port (not yet open sourced) on Android.
+
+[Release notes](https://github.com/dropbox/zxcvbn/releases)
+
+For more motivation, see:
 
 http://tech.dropbox.com/?p=165
 
 # Installation
 
+zxcvbn detects and supports CommonJS (node, browserify) and AMD (RequireJS). In the absence of those, it adds a single function `zxcvbn()` to the global namespace.
+
+## Bower
+
+Install [`node`](https://nodejs.org/download/) and [`bower`](http://bower.io/) if you haven't already.
+
+Get `zxcvbn`:
+
+``` shell
+cd /path/to/project/root
+bower install zxcvbn
+```
+
+Add this script to your `index.html`:
+
 ``` html
-<script type="text/javascript" src="zxcvbn-async.js">
+<script type="text/javascript" src="bower_components/zxcvbn/dist/zxcvbn.js">
 </script>
 ```
 
-is the best way to add `zxcvbn` to your site. Host `zxcvbn.js` and
-`zxcvbn-async.js` somewhere on your web server, and make the hardcoded
-path inside `zxcvbn-async.js` point to `zxcvbn.js`. A relative path works
-well.
+To make sure it loaded properly, open in a browser and type `zxcvbn('Tr0ub4dour&3')` into the console.
 
-`zxcvbn-async.js` is a tiny 350 bytes. On `window.load`, after your page
-loads and renders, it'll fetch `zxcvbn.js`, which is more like 700k (330k
-gzipped), most of which is a series of dictionaries.
+To pull in updates and bug fixes:
 
-I haven't found 700k to be too large -- especially because a password
-isn't the first thing a user typically enters on a registration form.
-
-`zxcvbn.js` can also be included directly:
-
-``` html
-<script type="text/javascript" src="zxcvbn.js">
-</script>
+``` shell
+bower update zxcvbn
 ```
 
-But this isn't recommended, as the 700k download will block your
-initial page load.
+## Node / npm
 
-`zxcvbn` adds a single function to the global namespace:
+zxcvbn works identically on the server.
+
+``` shell
+$ npm install zxcvbn
+$ node
+> var zxcvbn = require('zxcvbn');
+> zxcvbn('Tr0ub4dour&3');
+```
+
+## RequireJS
+
+Add [`zxcvbn.js`](https://raw.githubusercontent.com/dropbox/zxcvbn/master/dist/zxcvbn.js) to your project (using bower, npm or direct download) and import as usual:
 
 ``` javascript
-zxcvbn(password, user_inputs)
+requirejs(["relpath/to/zxcvbn"], function (zxcvbn) {
+    console.log(zxcvbn('Tr0ub4dour&3'));
+});
 ```
 
-It takes one required argument, a password, and returns a result object.
-The result includes a few properties:
+## Browserify / Webpack
 
-``` coffeescript
-result.entropy            # bits
+If you're using `npm` and have `require('zxcvbn')` somewhere in your code, browserify and webpack should just work.
 
-result.crack_time         # estimation of actual crack time, in seconds.
+``` shell
+$ npm install zxcvbn
+$ echo "console.log(require('zxcvbn'))" > mymodule.js
+$ browserify mymodule.js > browserify_bundle.js
+$ webpack mymodule.js webpack_bundle.js
+```
 
-result.crack_time_display # same crack time, as a friendlier string:
-                          # "instant", "6 minutes", "centuries", etc.
+But we recommend against bundling zxcvbn via tools like browserify and webpack, for three reasons:
 
-result.score              # [0,1,2,3,4] if crack time is less than
-                          # [10**2, 10**4, 10**6, 10**8, Infinity].
-                          # (useful for implementing a strength bar.)
+* Minified and gzipped, zxcvbn is still several hundred kilobytes. (Significantly grows bundle size.)
+* Most sites will only need zxcvbn on a few pages (registration, password reset).
+* Most sites won't need `zxcvbn()` immediately upon page load; since `zxcvbn()` is typically called in response to user events like filling in a password, there's ample time to fetch `zxcvbn.js` after initial html/css/js loads and renders.
 
-result.match_sequence     # the list of patterns that zxcvbn based the
-                          # entropy calculation on.
+See the [performance](#perf) section below for tips on loading zxcvbn stand-alone.
 
-result.calc_time          # how long it took to calculate an answer,
-                          # in milliseconds. usually only a few ms.
+Tangentially, if you want to build your own standalone, consider tweaking the browserify pipeline used to generate `dist/zxcvbn.js`:
+
+``` shell
+$ browserify --debug --standalone zxcvbn \
+    -t coffeeify --extension='.coffee' \
+    -t uglifyify \
+    src/main.coffee | exorcist dist/zxcvbn.js.map >| dist/zxcvbn.js
+```
+
+* `--debug` adds an inline source map to the bundle. `exorcist` pulls it out into `dist/zxcvbn.js.map`.
+* `--standalone zxcvbn` exports a global `zxcvbn` when CommonJS/AMD isn't detected.
+* `-t coffeeify --extension='.coffee'` compiles `.coffee` to `.js` before bundling. This is convenient as it allows `.js` modules to import from `.coffee` modules and vice-versa. Instead of this transform, one could also compile everything to `.js` first (`npm run prepublish`) and point `browserify` to `lib` instead of `src`.
+* `-t uglifyify` minifies the bundle through UglifyJS, maintaining proper source mapping.
+
+## Manual installation
+
+Download [zxcvbn.js](https://raw.githubusercontent.com/dropbox/zxcvbn/master/dist/zxcvbn.js).
+
+Add to your .html:
+
+``` html
+<script type="text/javascript" src="path/to/zxcvbn.js">
+</script>
+```
+
+# Usage
+
+[try zxcvbn interactively](https://dl.dropboxusercontent.com/u/209/zxcvbn/test/index.html) to see these docs in action.
+
+``` javascript
+zxcvbn(password, user_inputs=[])
+```
+
+`zxcvbn()` takes one required argument, a password, and returns a result object with several properties:
+
+``` coffee
+result.guesses            # estimated guesses needed to crack password
+result.guesses_log10      # order of magnitude of result.guesses
+
+result.crack_time_seconds # dictionary of back-of-the-envelope crack time
+                          # estimations, in seconds, based on a few scenarios:
+{
+  # online attack on a service that ratelimits password auth attempts.
+  online_throttling_100_per_hour
+
+  # online attack on a service that doesn't ratelimit,
+  # or where an attacker has outsmarted ratelimiting.
+  online_no_throttling_10_per_second
+
+  # offline attack. assumes multiple attackers,
+  # proper user-unique salting, and a slow hash function
+  # w/ moderate work factor, such as bcrypt, scrypt, PBKDF2.
+  offline_slow_hashing_1e4_per_second
+
+  # offline attack with user-unique salting but a fast hash
+  # function like SHA-1, SHA-256 or MD5. A wide range of
+  # reasonable numbers anywhere from one billion - one trillion
+  # guesses per second, depending on number of cores and machines.
+  # ballparking at 10B/sec.
+  offline_fast_hashing_1e10_per_second
+}
+
+result.crack_time_display # same keys as result.crack_time_seconds,
+                          # with friendlier display string values:
+                          # "less than a second", "3 hours", "centuries", etc.
+
+result.score      # Integer from 0-4 (useful for implementing a strength bar)
+
+  0 # too guessable: risky password. (guesses < 10^3)
+
+  1 # very guessable: protection from throttled online attacks. (guesses < 10^6)
+
+  2 # somewhat guessable: protection from unthrottled online attacks. (guesses < 10^8)
+
+  3 # safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10)
+
+  4 # very unguessable: strong protection from offline slow-hash scenario. (guesses >= 10^10)
+
+result.feedback   # verbal feedback to help choose better passwords. set when score <= 2.
+
+  result.feedback.warning     # explains what's wrong, eg. 'this is a top-10 common password'.
+                              # not always set -- sometimes an empty string
+
+  result.feedback.suggestions # a possibly-empty list of suggestions to help choose a less
+                              # guessable password. eg. 'Add another word or two'
+
+result.sequence   # the list of patterns that zxcvbn based the
+                  # guess calculation on.
+
+result.calc_time  # how long it took zxcvbn to calculate an answer,
+                  # in milliseconds.
 ````
 
-The optional `user_inputs` argument is an array of strings that `zxcvbn`
-will add to its internal dictionary. This can be whatever list of
-strings you like, but is meant for user inputs from other fields of the
-form, like name and email. That way a password that includes the user's
-personal info can be heavily penalized. This list is also good for
-site-specific vocabulary.
+The optional `user_inputs` argument is an array of strings that zxcvbn will treat as an extra dictionary. This can be whatever list of strings you like, but is meant for user inputs from other fields of the form, like name and email. That way a password that includes a user's personal information can be heavily penalized. This list is also good for site-specific vocabulary — Acme Brick Co. might want to include ['acme', 'brick', 'acmebrick', etc].
 
-When `zxcvbn` loads (after the async script fetch is complete), it'll
-check if a function named `zxcvbn_load_hook` is defined, and run it with
-no arguments if so. Most sites shouldn't need this.
+# <a name="perf"></a>Performance
+
+## runtime latency
+
+zxcvbn operates below human perception of delay for most input: ~5-20ms for ~25 char passwords on modern browsers/CPUs, ~100ms for passwords around 100 characters. To bound runtime latency for really long passwords, consider sending `zxcvbn()` only the first 100 characters or so of user input.
+
+## script load latency
+
+`zxcvbn.js` bundled and minified is about 390kb gzipped or 800kb uncompressed, most of which is dictionaries. Consider these tips if you're noticing page load latency on your site.
+
+* Make sure your server is configured to compress static assets for browsers that support it. ([nginx tutorial](https://rtcamp.com/tutorials/nginx/enable-gzip/), [apache/IIS tutorial](http://betterexplained.com/articles/how-to-optimize-your-site-with-gzip-compression/).)
+
+Then try one of these alternatives:
+
+1. Put your `<script src="zxcvbn.js">` tag at the end of your html, just before the closing `</body>` tag. This insures your page loads and renders before the browser fetches and loads `zxcvbn.js`. The downside with this approach is `zxcvbn()` becomes available later than had it been included in `<head>` — not an issue on most signup pages where users are filling out other fields first.
+
+2. If you're using requirejs, try loading `zxcvbn.js` separately from your main bundle. Something to watch out for: if `zxcvbn.js` is required inside a keyboard handler waiting for user input, the entire script might be loaded only after the user presses their first key, creating nasty latency. Avoid this by calling your handler once upon page load, independent of user input, such that the `requirejs()` call runs earlier.
+
+3. Use the HTML5 [`async`](http://www.w3schools.com/tags/att_script_async.asp) script attribute. Downside: [doesn't work](http://caniuse.com/#feat=script-async) in IE7-9 or Opera Mini.
+
+4. Include an inline `<script>` in `<head>` that asynchronously loads `zxcvbn.js` in the background. Despite the extra code I prefer this over (3) because it works in older browsers.
+
+``` javascript
+// cross-browser asynchronous script loading for zxcvbn.
+// adapted from http://friendlybit.com/js/lazy-loading-asyncronous-javascript/
+
+(function() {
+
+  var ZXCVBN_SRC = 'path/to/zxcvbn.js';
+
+  var async_load = function() {
+    var first, s;
+    s = document.createElement('script');
+    s.src = ZXCVBN_SRC;
+    s.type = 'text/javascript';
+    s.async = true;
+    first = document.getElementsByTagName('script')[0];
+    return first.parentNode.insertBefore(s, first);
+  };
+
+  if (window.attachEvent != null) {
+    window.attachEvent('onload', async_load);
+  } else {
+    window.addEventListener('load', async_load, false);
+  }
+
+}).call(this);
+```
 
 # Development
 
 Bug reports and pull requests welcome!
 
-`zxcvbn` is written in CoffeeScript and Python. `zxcvbn.js` is built with
-`compile_and_minify.sh`, which compiles CoffeeScript into JavaScript,
-then JavaScript into efficient, minified JavaScript.
-
-For development, include these scripts instead of `zxcvbn.js`:
-
-``` html
-<script type="text/javascript" src="adjacency_graphs.js">
-</script>
-<script type="text/javascript" src="frequency_lists.js">
-</script>
-<script type="text/javascript" src="matching.js">
-</script>
-<script type="text/javascript" src="scoring.js">
-</script>
-<script type="text/javascript" src="init.js">
-</script>
+``` shell
+git clone https://github.com/dropbox/zxcvbn.git
 ```
 
-Data lives in the first two scripts. These get produced by:
+zxcvbn is built with CoffeeScript, browserify, and uglify-js. CoffeeScript source lives in `src`, which gets compiled, bundled and minified into `dist/zxcvbn.js`.
 
+``` shell
+npm run build    # builds dist/zxcvbn.js
+npm run watch    # same, but quickly rebuilds as changes are made in src.
 ```
-scripts/build_keyboard_adjacency_graph.py
-scripts/build_frequency_lists.py
-```
 
-`matching.coffee`, `scoring.coffee`, and `init.coffee` make up the rest of the
-library.
+For debugging, both `build` and `watch` output an external source map `dist/zxcvbn.js.map` that points back to the original CoffeeScript code.
 
-`init.js` needs to come last, otherwise script order doesn't matter.
+Two source files, `adjacency_graphs.coffee` and `frequency_lists.coffee`, are generated by python scripts in `data-scripts` that read raw data from the `data` directory.
 
-I recommend setting up coffee-mode in emacs, or whatever equivalent, so
-that CoffeeScript compiles to js on save. Otherwise you'll need to
-repetitively run `compile_and_minify.js`
-
+For node developers, in addition to `dist`, the zxcvbn `npm` module includes a `lib` directory (hidden from git) that includes one compiled `.js` and `.js.map` file for every `.coffee` in `src`. See `prepublish` in `package.json` to learn more.
 
 # Acknowledgments
 
-Dropbox, thank you in so many ways, but in particular, for supporting
-independent projects both inside and outside of hackweek.
+[Dropbox](https://dropbox.com) for supporting open source!
 
-Many thanks to Mark Burnett for releasing his 10k top passwords list:
+Leah Culver and Ryan Pearl for porting zxcvbn to [Objective C](https://github.com/dropbox/zxcvbn-ios) and [python](https://github.com/dropbox/python-zxcvbn).
 
-http://xato.net/passwords/more-top-worst-passwords
+Mark Burnett for releasing his 10M password corpus and for his 2005 book, [Perfect Passwords: Selection, Protection, Authentication](http://www.amazon.com/Perfect-Passwords-Selection-Protection-Authentication/dp/1597490415).
 
-and for his 2006 book,
-"Perfect Passwords: Selection, Protection, Authentication"
+Wiktionary contributors for building a [frequency list of English](http://en.wiktionary.org/wiki/Wiktionary:Frequency_lists) as used in television and movies.
 
-Huge thanks to Wiktionary contributors for building a frequency list
-of English as used in television and movies:
-http://en.wiktionary.org/wiki/Wiktionary:Frequency_lists
+Researchers at Concordia University for [studying password estimation rigorously](http://www.concordia.ca/cunews/main/stories/2015/03/25/does-your-password-pass-muster.html) and recommending zxcvbn.
 
-Researchers encourage others to model their strength meters after this one: http://www.concordia.ca/cunews/main/stories/2015/03/25/does-your-password-pass-muster.html
-
-Last but not least, big thanks to xkcd :)
-https://xkcd.com/936/
+And [xkcd](https://xkcd.com/936/) for the inspiration :+1::horse::battery::heart:

@@ -1,8 +1,33 @@
 {
-  "name": "zxcvbn",
-  "version": "1.0.0",
-  "main": [
-    "zxcvbn.js", 
-    "zxcvbn-async.js"
-  ]
+    "name": "zxcvbn",
+    "description": "realistic password strength estimation",
+    "main": "dist/zxcvbn.js",
+    "keywords": [
+        "password",
+        "passphrase",
+        "strength",
+        "quality",
+        "estimation",
+        "estimate",
+        "meter",
+        "pattern",
+        "matcher",
+        "security",
+        "authentication",
+        "cracking",
+        "scoring",
+        "entropy",
+        "bruteforce"
+    ],
+    "ignore": [
+        "/.*",
+        "*.json",
+        "node_modules",
+        "data",
+        "data-scripts",
+        "demo",
+        "lib",
+        "src",
+        "test"
+        ]
 }

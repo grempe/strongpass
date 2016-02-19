@@ -132,7 +132,7 @@ function processPassphrase(args) {
       version: args.version,
       salt: args.salt,
       passphraseEntropy: zxcvbnPassphrase.entropy,
-      passwordEntropy: zxcvbnPassword.entropy,
+      passwordCrackTime: zxcvbnPassword.crack_times_display.offline_fast_hashing_1e10_per_second,
     };
   } else {
     return null;
@@ -266,13 +266,13 @@ function updateOutputContainers() {
 function updatePasswordOutputContainer(securityObj) {
   if (isWebMode() && securityObj && securityObj.usernameOrAppname && securityObj.host && securityObj.password) { // web mode
     $('#passwordOutput').text(securityObj.password);
-    $('#passwordEntropy').text(securityObj.passwordEntropy);
+    $('#passwordCrackTime').text(securityObj.passwordCrackTime);
 
     // $("#sanitizedSaltInWords").text(computeSaltInWords(securityObj.usernameOrAppname, securityObj.host, securityObj.version, securityObj.salt));
     $('#passwordOutputContainer').slideDown();
   } else if (isAppMode() && securityObj && securityObj.usernameOrAppname && securityObj.password) { // app mode
     $('#passwordOutput').text(securityObj.password);
-    $('#passwordEntropy').text(securityObj.passwordEntropy);
+    $('#passwordCrackTime').text(securityObj.passwordCrackTime);
 
     // $("#sanitizedSaltInWords").text(computeSaltInWords(securityObj.usernameOrAppname, securityObj.host, securityObj.version, securityObj.salt));
     $('#passwordOutputContainer').slideDown();

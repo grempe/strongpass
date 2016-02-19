@@ -37,7 +37,7 @@ var methods = {};
                     if (value) { userInputs.push(value); }
                 });
                 userInputs = userInputs.concat(options.common.zxcvbnTerms);
-                score = zxcvbn(word, userInputs).entropy;
+                score = Math.log2(zxcvbn(word, userInputs).guesses);
             } else {
                 score = rulesEngine.executeRules(options, word);
             }
@@ -70,7 +70,7 @@ var methods = {};
             $el.data("pwstrength-bootstrap", localOptions);
             $el.on("keyup", onKeyUp);
             $el.on("change", onKeyUp);
-            $el.on("onpaste", onKeyUp);
+            $el.on("paste", onKeyUp);
 
             ui.initUI(localOptions, $el);
             if ($.trim($el.val())) { // Not empty, calculate the strength

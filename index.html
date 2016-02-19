@@ -120,8 +120,8 @@
         <!-- <p><small class="text-muted"><strong>settings:</strong> <span id="sanitizedSaltInWords"></span></small></p> -->
         <p>
           <small class="text-muted">
-            <strong>entropy:</strong> ~
-            <span id="passwordEntropy"></span> bits</small>
+            <strong>crack time:</strong> ~
+            <span id="passwordCrackTime"></span> @ 1e10/second</small>
         </p>
       </div>
 
@@ -259,10 +259,10 @@ password          = first18Chars(base64encode(derivedKey)) + symbol + number
     <!-- load third party libraries -->
     <script src="js/bower_components/jquery/dist/jquery.min.js"></script>
     <script src="js/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="js/bower_components/pwstrength-bootstrap/dist/pwstrength-bootstrap-1.2.7.min.js"></script>
+    <script src="js/bower_components/pwstrength-bootstrap/dist/pwstrength-bootstrap-1.2.10.min.js"></script>
     <script src="js/bower_components/bootstrap-validator/dist/validator.min.js"></script>
     <script src="js/bower_components/jsuri/Uri.js"></script>
-    <script src="js/bower_components/zxcvbn/zxcvbn.js"></script>
+    <script src="js/bower_components/zxcvbn/dist/zxcvbn.js"></script>
     <script src="js/bower_components/tweetnacl/nacl-fast.min.js"></script>
     <script src="js/bower_components/tweetnacl-auth/nacl-auth.min.js"></script>
     <script src="js/bower_components/js-scrypt/browser/scrypt.js"></script>
