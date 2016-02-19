@@ -1,6 +1,6 @@
 {
   "name": "tweetnacl-auth",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "authors": [
     "Dmitry Chestnykh <dmitry@codingrobots.com>"
   ],
@@ -30,14 +30,14 @@
   "dependencies": {
     "tweetnacl": "0.x.x"
   },
-  "_release": "0.2.4",
+  "_release": "0.3.0",
   "_resolution": {
     "type": "version",
-    "tag": "v0.2.4",
-    "commit": "4a9db5cb3eee4f205160fb1cc0bba83b4b933072"
+    "tag": "v0.3.0",
+    "commit": "a93348a10405814dfbc24af687dba10e188ef661"
   },
   "_source": "git://github.com/dchest/tweetnacl-auth-js.git",
-  "_target": "~0.2.4",
+  "_target": "^0.3.0",
   "_originalSource": "tweetnacl-auth",
   "_direct": true
 }
