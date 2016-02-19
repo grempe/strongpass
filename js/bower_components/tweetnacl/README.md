@@ -53,7 +53,7 @@ There are two versions, you can use either of them:
 Installation
 ------------
 
-You can install TweetNaCl.is via a package manager:
+You can install TweetNaCl.js via a package manager:
 
 [Bower](http://bower.io):
 
@@ -393,7 +393,7 @@ For example, the following command will test fast minified version:
 
     $ NACL_SRC=nacl-fast.min.js npm test
 
-To run full suite of tests in Node.hs, including comparing outputs of
+To run full suite of tests in Node.js, including comparing outputs of
 JavaScript port to outputs of the original C version:
 
     $ npm run testall
@@ -444,6 +444,14 @@ and [Poly1305-donna](https://github.com/floodyberry/poly1305-donna)
 Contributors have dedicated their work to the public domain.
 
 This software is distributed without any warranty.
+
+
+Third-party libraries based on TweetNaCl.js
+-------------------------------------------
+
+* [forward-secrecy](https://github.com/alax/forward-secrecy) — Axolotl ratchet implementation
+* [nacl-stream](https://github.com/dchest/nacl-stream-js) - streaming encryption
+* [tweetnacl-auth-js](https://github.com/dchest/tweetnacl-auth-js) — implementation of [`crypto_auth`](http://nacl.cr.yp.to/auth.html)
 
 
 Who uses it

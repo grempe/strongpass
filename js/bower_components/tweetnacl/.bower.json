@@ -1,6 +1,6 @@
 {
   "name": "tweetnacl",
-  "version": "0.13.1",
+  "version": "0.13.3",
   "homepage": "https://dchest.github.io/tweetnacl-js",
   "authors": [
     "TweetNaCl.js Contributors"
@@ -33,14 +33,13 @@
     "test",
     "package.json"
   ],
-  "_release": "0.13.1",
+  "_release": "0.13.3",
   "_resolution": {
     "type": "version",
-    "tag": "v0.13.1",
-    "commit": "abfbce7c68c8ad0b3b8a90b769e1f67885237aac"
+    "tag": "v0.13.3",
+    "commit": "2bb422cb707fba4a5ec9654688564a4fb861b068"
   },
   "_source": "git://github.com/dchest/tweetnacl-js.git",
-  "_target": "~0.13.1",
-  "_originalSource": "tweetnacl",
-  "_direct": true
+  "_target": "0.x.x",
+  "_originalSource": "tweetnacl"
 }
