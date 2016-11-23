@@ -29,8 +29,7 @@
           <small>a deterministic, cryptographically strong, password generator</small>
         </h1>
         <p class="lead">
-          We all need passwords that are strong and easy to remember. If you can remember one strong passphrase you can generate a password for any number of websites, or local applications. The same passphrase and options will always result
-          in the same output being generated. You can be assured that all cryptographic operations are done in your browser and no information is sent elsewhere or shared with anyone. You don't have to trust this assertion blindly, you can examine and run the source code locally to verify the safety of its use.
+          Warning : Before jumping in with a deterministic password manager, you should understand the pro's and cons of doing so. Please read <a href="https://tonyarcieri.com/4-fatal-flaws-in-deterministic-password-managers" target="_blank" rel="noreferrer">4 fatal flaws in deterministic password managers</a> before use!
         </p>
       </div>
 
@@ -142,23 +141,23 @@
           </div>
           <div id="ans1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="faq1">
             <div class="panel-body">
-              <p>This application generates strong passwords by combining a verifiably high-entropy
+              <p>This application generates strong passwords by combining a high-entropy
                 secret passphrase, an optional secret salt from a hardware token like the
                 <a href="http://amzn.to/1Lviktk" target="_blank">Yubikey</a>, and other
                 context sensitive attributes which are assumed to be public knowlege such
                 as a username or website URL.</p>
 
                 <p>These inputs are then combined and processed through a
-                series of cryptographic key derivation functions which will always
+                cryptographic key derivation function which will always
                 generate the same output for any given inputs. It is considered by experts to
                 be impossible to reverse the process and discover your passphrase from anything
                 this tool generates. These properties are what makes this tool
                 so useful. You only need to remember a single strong passphrase in
                 order to generate all of your passwords at anytime, from anywhere.</p>
 
-                <p>The use of an optional hardware token that stores a very strong
-                static password adds a weak form of second factor security (something you
-                have) to the passphrase (something you know).</p>
+                <p>The use of an optional hardware token or salt adds a weak form of
+                second factor security (something you have) to the passphrase
+                (something you know).</p>
 
                 <p>The most important thing to remember to help ensure you use this tool
                 securely is that your strong passphrase, and the optional token password,
@@ -217,11 +216,11 @@
           </div>
           <div id="ans4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="faq4">
             <div class="panel-body">
-              <p>I created this tool for my own use. I use it. You can trust it to do what it says. It has been lightly reviewed by <a href="https://github.com/dchest" target="_blank">Dmitry Chestnykh</a> who is a respected author of many cryptographic tools (and whose '<a href="https://github.com/dchest/cryptopass" target="_blank">cryptopass</a>' Chrome extension was an inspiration for this tool). It will generate strong passwords locally in your browser and will never communicate anything that you enter, or the passwords it generates, out to the Internet.
+              <p>I created this tool for my own use. I <strike>use it</strike>no longer use it though, primarily due to usability issues which I solve much more neatly with a password manager. You can trust it to do what it says. It has been lightly reviewed by <a href="https://github.com/dchest" target="_blank">Dmitry Chestnykh</a> who is a respected author of many cryptographic tools (and whose '<a href="https://github.com/dchest/cryptopass" target="_blank">cryptopass</a>' Chrome extension was an inspiration for this tool). It will generate strong passwords locally in your browser and will never communicate anything that you enter, or the passwords it generates, out to the Internet.
                 You are free to browse the <a href="https://github.com/grempe/strongpass" target="_blank">source code</a>, and you can easily run a local copy by just opening the
-                <code>index.html</code> file in your browser. In this case you can run this site completely offline, with your network disconnected. There are no cookies, no analytics tracking scripts, and it runs only over a TLS (HTTPS) connection.</p>
-              <p>All that being said, I am not a cryptographer. I believe it is strong based on the fact that I am using published cryptographic primatives consistent with their recommended
-                usage based on my own research and reaching out to experts. There is no cryptographic invention claimed. Read the source code, use at your own risk, and decide for yourself if its safe enough for you.</p>
+                <code>index.html</code> file in your browser. In this case you can run this site completely offline, with your network disconnected.</p>
+              <p>I am not a cryptographer but I believe the implementation is strong based on the fact that I am using published cryptographic primatives consistent with their recommended
+                usage based on my own research and reaching out to experts. There is no cryptographic invention claimed. Read the source code, use at your own risk, and decide for yourself if its safe (and usable) enough for you.</p>
             </div>
           </div>
         </div>
